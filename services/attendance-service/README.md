@@ -25,3 +25,8 @@ Puerto: `8084`
 - `POST /api/attendances`
 - `GET /api/attendances/student/{studentId}`
 - `GET /api/attendances/student/{studentId}/summary`
+
+## Documentacion API
+
+- Swagger UI: `http://localhost:8084/swagger-ui/index.html`
+- OpenAPI JSON: `http://localhost:8084/v3/api-docs`
