@@ -1,0 +1,6 @@
+Orden sugerido de ejecución:
+1. services/students-service
+2. services/attendance-service
+3. services/grades-service
+4. apps/bff
+5. apps/frontend
