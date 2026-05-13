@@ -1,0 +1,23 @@
+Repositorio principal:
+https://github.com/usuario/AulaBOH
+Contiene la solución completa AulaBOH con frontend, BFF, microservicios, plataforma, arquetipos y documentación.
+
+Frontend:
+https://github.com/usuario/aulaboh-frontend
+Contiene la aplicación React y el consumo de endpoints del BFF.
+
+BFF:
+https://github.com/usuario/aulaboh-bff
+Contiene la capa Backend For Frontend con patrón Facade.
+
+Students Service:
+https://github.com/usuario/aulaboh-students-service
+Contiene el microservicio de gestión de estudiantes con Repository Pattern y Factory Method.
+
+Attendance Service:
+https://github.com/usuario/aulaboh-attendance-service
+Contiene el microservicio de clases y asistencia con Repository Pattern y Adapter/Client.
+
+Grades Service:
+https://github.com/usuario/aulaboh-grades-service
+Contiene el microservicio de evaluaciones y calificaciones.

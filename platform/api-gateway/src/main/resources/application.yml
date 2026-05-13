@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        - id: bff
+          uri: http://localhost:8080
+          predicates:
+            - Path=/api/bff/**
+        - id: students
+          uri: http://localhost:8081
+          predicates:
+            - Path=/api/students/**
+        - id: attendance
+          uri: http://localhost:8084
+          predicates:
+            - Path=/api/classes/**,/api/attendances/**
+        - id: grades
+          uri: http://localhost:8083
+          predicates:
+            - Path=/api/evaluations/**,/api/grades/**
+server:
+  port: 8090
+eureka:
+  client:
+    enabled: false
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
