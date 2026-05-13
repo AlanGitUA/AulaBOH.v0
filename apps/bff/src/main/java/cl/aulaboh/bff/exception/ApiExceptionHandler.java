@@ -16,6 +16,11 @@ public class ApiExceptionHandler {
         return ResponseEntity.status(ex.getStatusCode()).body(errorBody("DownstreamServiceException", ex.getResponseBodyAsString()));
     }
 
+    @ExceptionHandler(DownstreamServiceUnavailableException.class)
+    public ResponseEntity<Map<String, Object>> downstreamUnavailable(DownstreamServiceUnavailableException ex) {
+        return ResponseEntity.status(503).body(errorBody("DownstreamServiceUnavailableException", ex.getMessage()));
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> validation(MethodArgumentNotValidException ex) {
         String message = ex.getBindingResult().getFieldErrors().stream().findFirst()
