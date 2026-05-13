@@ -30,7 +30,13 @@ archetypes/                      Arquetipos Maven
 
 ## Ejecución recomendada
 
-Abrir una terminal por componente:
+Primero compilar desde la raíz del proyecto:
+
+```bash
+mvn clean install -DskipTests
+```
+
+Luego abrir una terminal por componente:
 
 ```bash
 cd services/students-service
@@ -71,3 +77,15 @@ npm run dev
 ## Nota
 
 No se incluyeron pruebas unitarias por solicitud del equipo.
+
+
+## Flujo de demostración desde frontend
+
+1. Registrar estudiante.
+2. Registrar clase.
+3. Registrar asistencia.
+4. Registrar evaluación.
+5. Registrar calificación.
+6. Presionar **Ver resumen** para validar asistencia y calificaciones.
+
+Todo el frontend consume el BFF mediante `/api/bff/...`, lo que permite demostrar el patrón Facade.
