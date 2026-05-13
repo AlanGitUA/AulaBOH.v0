@@ -23,3 +23,8 @@ Puerto: `8081`
 - `GET /api/students/{id}`
 - `PUT /api/students/{id}`
 - `DELETE /api/students/{id}`
+
+## Documentacion API
+
+- Swagger UI: `http://localhost:8081/swagger-ui/index.html`
+- OpenAPI JSON: `http://localhost:8081/v3/api-docs`
