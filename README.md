@@ -86,7 +86,7 @@ mvn verify
 Guia completa: `docs/testing-quality.md`
 
 
-## Flujo de demostración desde frontend
+## Flujo operativo desde frontend
 
 1. Registrar estudiante.
 2. Registrar clase.
@@ -95,4 +95,4 @@ Guia completa: `docs/testing-quality.md`
 5. Registrar calificación.
 6. Presionar **Ver resumen** para validar asistencia y calificaciones.
 
-Todo el frontend consume el BFF mediante `/api/bff/...`, lo que permite demostrar el patrón Facade.
+Todo el frontend consume el BFF mediante `/api/bff/...`, manteniendo una capa centralizada de orquestación hacia los microservicios.
