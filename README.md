@@ -74,9 +74,16 @@ npm run dev
 - Discovery Server: `8761`
 - Frontend: `5173`
 
-## Nota
+## Pruebas y calidad
 
-No se incluyeron pruebas unitarias por solicitud del equipo.
+El backend incluye pruebas unitarias para los microservicios principales y el BFF. La cobertura se genera con JaCoCo.
+
+```bash
+mvn test
+mvn verify
+```
+
+Guia completa: `docs/testing-quality.md`
 
 
 ## Flujo de demostración desde frontend
