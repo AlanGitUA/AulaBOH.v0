@@ -30,3 +30,7 @@ Puerto: `8084`
 
 - Swagger UI: `http://localhost:8084/swagger-ui/index.html`
 - OpenAPI JSON: `http://localhost:8084/v3/api-docs`
+
+## Resiliencia
+
+La validacion contra `students-service` esta protegida con el circuit breaker `studentsService`. Si el servicio de estudiantes no esta disponible, el registro de asistencia responde `503` y no persiste datos.

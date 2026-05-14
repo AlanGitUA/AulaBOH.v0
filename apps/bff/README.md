@@ -33,3 +33,9 @@ Puerto: `8080`
 
 - Swagger UI: `http://localhost:8080/swagger-ui/index.html`
 - OpenAPI JSON: `http://localhost:8080/v3/api-docs`
+
+## Resiliencia
+
+El BFF aplica circuit breakers para `studentsService`, `attendanceService` y `gradesService`. Las consultas pueden devolver respuestas degradadas, como listas vacias, mientras que las escrituras retornan `503` si el servicio requerido no esta disponible.
+
+Guia completa: `docs/resilience-circuit-breaker.md`

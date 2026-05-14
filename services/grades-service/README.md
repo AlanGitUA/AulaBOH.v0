@@ -27,3 +27,7 @@ Puerto: `8083`
 
 - Swagger UI: `http://localhost:8083/swagger-ui/index.html`
 - OpenAPI JSON: `http://localhost:8083/v3/api-docs`
+
+## Resiliencia
+
+La validacion contra `students-service` esta protegida con el circuit breaker `studentsService`. Si el servicio de estudiantes no esta disponible, el registro de calificaciones responde `503` y no persiste datos.
