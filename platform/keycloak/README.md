@@ -1,14 +1,13 @@
 # Keycloak - AulaBOH
 
-Este componente deja preparada la autenticación centralizada del sistema AulaBOH.
-Para no romper la demostración funcional actual, Keycloak queda como componente de plataforma y seguridad preparado para integración con JWT.
+Este componente provee la base de autenticación centralizada para AulaBOH mediante realms, clientes, roles y usuarios iniciales.
 
 ## Levantar Keycloak
 
 Desde esta carpeta:
 
 ```powershell
-cd "C:\proyectos\AulaBOH.v0\platform\keycloak"
+cd platform/keycloak
 docker compose up -d
 ```
 
@@ -33,10 +32,10 @@ El archivo `realms/aulaboh-realm.json` crea:
 - Cliente público: `aulaboh-frontend`
 - Cliente confidencial: `aulaboh-bff`
 - Roles: `ADMIN`, `DOCENTE`, `ESTUDIANTE`, `APODERADO`
-- Usuarios demo:
+- Usuarios iniciales:
   - `admin.aulaboh` / `Admin123`
   - `docente.demo` / `Docente123`
 
-## Uso en la defensa
+## Uso esperado
 
-Keycloak se presenta como componente de seguridad para manejo de sesiones, autenticación y roles. En esta versión queda preparado para integración futura, sin bloquear la demo funcional del frontend y microservicios.
+Keycloak centraliza la administración de sesiones, autenticación y roles de usuario. Los clientes `aulaboh-frontend` y `aulaboh-bff` permiten separar el acceso de aplicaciones frontend y backend dentro del mismo realm.
