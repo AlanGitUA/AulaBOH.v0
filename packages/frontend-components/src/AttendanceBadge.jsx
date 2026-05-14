@@ -1,8 +1,8 @@
-export default function AttendanceBadge({ label, value }) {
+export default function AttendanceBadge({ label, value = 0, tone = 'neutral' }) {
   return (
-    <div className="attendance-badge">
+    <article className={`attendance-badge attendance-badge--${tone}`}>
       <span>{label}</span>
       <strong>{value}</strong>
-    </div>
+    </article>
   );
 }
