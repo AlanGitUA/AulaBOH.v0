@@ -2,6 +2,7 @@ package cl.aulaboh.bff.facade;
 
 import cl.aulaboh.bff.client.*;
 import cl.aulaboh.bff.dto.*;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.springframework.stereotype.Component;
 import java.util.Arrays;
 import java.util.Collections;
@@ -18,6 +19,7 @@ public class AcademicSummaryFacade {
         this.studentClient = studentClient; this.attendanceClient = attendanceClient; this.gradesClient = gradesClient;
     }
 
+    @CircuitBreaker(name = "bffFacade")
     public AcademicSummaryResponse getStudentSummary(Long studentId) {
         StudentResponse student = studentClient.findById(studentId);
         AttendanceSummaryResponse attendance = attendanceClient.summary(studentId);
@@ -26,11 +28,13 @@ public class AcademicSummaryFacade {
         return new AcademicSummaryResponse(student, attendance, grades);
     }
 
+    @CircuitBreaker(name = "bffFacade")
     public List<StudentResponse> findStudents() {
         StudentResponse[] students = studentClient.findAll();
         return students == null ? Collections.emptyList() : Arrays.asList(students);
     }
 
+    @CircuitBreaker(name = "bffFacade")
     public StudentResponse createStudent(StudentRequest request) {
         return studentClient.create(request);
     }

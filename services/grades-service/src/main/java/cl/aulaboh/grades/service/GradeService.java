@@ -5,6 +5,7 @@ import cl.aulaboh.grades.dto.*;
 import cl.aulaboh.grades.exception.BusinessException;
 import cl.aulaboh.grades.model.*;
 import cl.aulaboh.grades.repository.*;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -18,6 +19,7 @@ public class GradeService {
         this.evaluationRepository = evaluationRepository; this.gradeRepository = gradeRepository; this.studentClient = studentClient;
     }
 
+    @CircuitBreaker(name = "gradesServiceMethods")
     public EvaluationResponse createEvaluation(EvaluationRequest request) {
         Evaluation e = new Evaluation();
         e.setCourse(request.getCourse());
@@ -27,11 +29,13 @@ public class GradeService {
         return toEvaluationResponse(evaluationRepository.save(e));
     }
 
+    @CircuitBreaker(name = "gradesServiceMethods")
     public List<EvaluationResponse> findEvaluations(String course) {
         List<Evaluation> evaluations = course == null ? evaluationRepository.findAll() : evaluationRepository.findByCourseIgnoreCase(course);
         return evaluations.stream().map(this::toEvaluationResponse).toList();
     }
 
+    @CircuitBreaker(name = "gradesServiceMethods")
     public GradeResponse registerGrade(GradeRequest request) {
         if (request.getScore() < 1.0 || request.getScore() > 7.0) throw new BusinessException("La nota debe estar entre 1.0 y 7.0");
         studentClient.findStudentById(request.getStudentId());
@@ -40,6 +44,7 @@ public class GradeService {
         return toResponse(gradeRepository.save(grade));
     }
 
+    @CircuitBreaker(name = "gradesServiceMethods")
     public List<GradeResponse> findByStudent(Long studentId) {
         return gradeRepository.findByStudentId(studentId).stream().map(this::toResponse).toList();
     }
