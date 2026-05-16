@@ -7,11 +7,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 @Component
 public class RequestLoggingInterceptor implements HandlerInterceptor {
 
-    private static final Logger logger = LoggerFactory.getLogger(RequestLoggingInterceptor.class);
+    private static final Logger logger = LoggerFactory.getLogger("OPERACIONES");
     private static final String START_TIME = "requestStartTime";
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private static final String SERVICE_NAME = "grades-service";
 
     @Override
@@ -25,12 +29,14 @@ public class RequestLoggingInterceptor implements HandlerInterceptor {
 
                 ------------------------------------------------------------
                 OPERACION HTTP INICIADA
-                Servicio    : {}
-                Metodo HTTP : {}
-                Endpoint    : {}
-                Origen      : {}
+                Fecha y hora : {}
+                Servicio     : {}
+                Metodo HTTP  : {}
+                Endpoint     : {}
+                Origen       : {}
                 ------------------------------------------------------------
                 """,
+                LocalDateTime.now().format(DATE_TIME_FORMATTER),
                 SERVICE_NAME,
                 request.getMethod(),
                 request.getRequestURI(),
@@ -59,6 +65,7 @@ public class RequestLoggingInterceptor implements HandlerInterceptor {
 
                     ============================================================
                     OPERACION HTTP FINALIZADA
+                    Fecha y hora     : {}
                     Servicio         : {}
                     Metodo HTTP      : {}
                     Endpoint         : {}
@@ -67,6 +74,7 @@ public class RequestLoggingInterceptor implements HandlerInterceptor {
                     Resultado        : {}
                     ============================================================
                     """,
+                    LocalDateTime.now().format(DATE_TIME_FORMATTER),
                     SERVICE_NAME,
                     request.getMethod(),
                     request.getRequestURI(),
@@ -79,6 +87,7 @@ public class RequestLoggingInterceptor implements HandlerInterceptor {
 
                     ============================================================
                     OPERACION HTTP CON ERROR
+                    Fecha y hora     : {}
                     Servicio         : {}
                     Metodo HTTP      : {}
                     Endpoint         : {}
@@ -87,6 +96,7 @@ public class RequestLoggingInterceptor implements HandlerInterceptor {
                     Error            : {}
                     ============================================================
                     """,
+                    LocalDateTime.now().format(DATE_TIME_FORMATTER),
                     SERVICE_NAME,
                     request.getMethod(),
                     request.getRequestURI(),
