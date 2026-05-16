@@ -3,12 +3,16 @@ package cl.aulaboh.bff.client;
 import cl.aulaboh.bff.dto.*;
 import cl.aulaboh.bff.exception.DownstreamServiceUnavailableException;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 @Component
 public class GradesClient {
+    private static final Logger logger = LoggerFactory.getLogger(GradesClient.class);
+
     private final RestTemplate restTemplate;
     private final String baseUrl;
 
@@ -38,18 +42,22 @@ public class GradesClient {
     }
 
     private EvaluationResponse createEvaluationFallback(EvaluationRequest request, Throwable ex) {
+        logger.warn("Circuit Breaker activado en BFF -> grades-service | metodo=createEvaluation | error={}", ex.getMessage(), ex);
         throw new DownstreamServiceUnavailableException("grades-service");
     }
 
     private EvaluationResponse[] findEvaluationsFallback(Throwable ex) {
+        logger.warn("Circuit Breaker activado en BFF -> grades-service | metodo=findEvaluations | respuesta degradada=[] | error={}", ex.getMessage(), ex);
         return new EvaluationResponse[0];
     }
 
     private GradeResponse registerGradeFallback(GradeRequest request, Throwable ex) {
+        logger.warn("Circuit Breaker activado en BFF -> grades-service | metodo=registerGrade | error={}", ex.getMessage(), ex);
         throw new DownstreamServiceUnavailableException("grades-service");
     }
 
     private GradeResponse[] gradesByStudentFallback(Long studentId, Throwable ex) {
+        logger.warn("Circuit Breaker activado en BFF -> grades-service | metodo=gradesByStudent | studentId={} | respuesta degradada=[] | error={}", studentId, ex.getMessage(), ex);
         return new GradeResponse[0];
     }
 }

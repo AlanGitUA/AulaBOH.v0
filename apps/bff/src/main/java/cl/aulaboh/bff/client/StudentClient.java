@@ -4,12 +4,16 @@ import cl.aulaboh.bff.dto.StudentRequest;
 import cl.aulaboh.bff.dto.StudentResponse;
 import cl.aulaboh.bff.exception.DownstreamServiceUnavailableException;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 @Component
 public class StudentClient {
+    private static final Logger logger = LoggerFactory.getLogger(StudentClient.class);
+
     private final RestTemplate restTemplate;
     private final String baseUrl;
 
@@ -34,14 +38,17 @@ public class StudentClient {
     }
 
     private StudentResponse createFallback(StudentRequest request, Throwable ex) {
+        logger.warn("Circuit Breaker activado en BFF -> students-service | metodo=create | error={}", ex.getMessage(), ex);
         throw new DownstreamServiceUnavailableException("students-service");
     }
 
     private StudentResponse findByIdFallback(Long id, Throwable ex) {
+        logger.warn("Circuit Breaker activado en BFF -> students-service | metodo=findById | id={} | error={}", id, ex.getMessage(), ex);
         throw new DownstreamServiceUnavailableException("students-service");
     }
 
     private StudentResponse[] findAllFallback(Throwable ex) {
+        logger.warn("Circuit Breaker activado en BFF -> students-service | metodo=findAll | respuesta degradada=[] | error={}", ex.getMessage(), ex);
         return new StudentResponse[0];
     }
 }

@@ -5,6 +5,7 @@ import cl.aulaboh.attendance.dto.*;
 import cl.aulaboh.attendance.exception.BusinessException;
 import cl.aulaboh.attendance.model.*;
 import cl.aulaboh.attendance.repository.*;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -20,6 +21,7 @@ public class AttendanceService {
         this.studentClient = studentClient;
     }
 
+    @CircuitBreaker(name = "attendanceServiceMethods")
     public ClassResponse createClass(ClassRequest request) {
         SchoolClass schoolClass = new SchoolClass();
         schoolClass.setCourse(request.getCourse());
@@ -28,11 +30,13 @@ public class AttendanceService {
         return toClassResponse(classRepository.save(schoolClass));
     }
 
+    @CircuitBreaker(name = "attendanceServiceMethods")
     public List<ClassResponse> findClasses(String course) {
         List<SchoolClass> classes = course == null ? classRepository.findAll() : classRepository.findByCourseIgnoreCase(course);
         return classes.stream().map(this::toClassResponse).toList();
     }
 
+    @CircuitBreaker(name = "attendanceServiceMethods")
     public AttendanceResponse registerAttendance(AttendanceRequest request) {
         studentClient.findStudentById(request.getStudentId());
         SchoolClass schoolClass = classRepository.findById(request.getClassId())
@@ -48,14 +52,17 @@ public class AttendanceService {
         return toResponse(attendanceRepository.save(attendance));
     }
 
+    @CircuitBreaker(name = "attendanceServiceMethods")
     public List<AttendanceResponse> findByStudent(Long studentId) {
         return attendanceRepository.findByStudentId(studentId).stream().map(this::toResponse).toList();
     }
 
+    @CircuitBreaker(name = "attendanceServiceMethods")
     public List<AttendanceResponse> findByCourse(String course) {
         return attendanceRepository.findBySchoolClassCourseIgnoreCase(course).stream().map(this::toResponse).toList();
     }
 
+    @CircuitBreaker(name = "attendanceServiceMethods")
     public AttendanceSummaryResponse getSummary(Long studentId) {
         return new AttendanceSummaryResponse(
                 studentId,
