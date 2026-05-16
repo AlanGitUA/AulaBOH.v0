@@ -4,17 +4,17 @@ export default function AppLayout() {
   return (
     <div className="app-shell">
       <aside className="sidebar">
-        <Link to="/" className="brand">
+        <Link to="/panel" className="brand">
           <span className="brand-seal">BOH</span>
           <div>
             <strong>AulaBOH</strong>
-            <small>Libro de Clases Digital</small>
+            <small>Panel Administrativo</small>
           </div>
         </Link>
 
         <nav className="sidebar-nav">
-          <NavLink to="/" end>
-            Inicio
+          <NavLink to="/panel">
+            Panel
           </NavLink>
           <NavLink to="/estudiantes">
             Estudiantes
@@ -25,6 +25,9 @@ export default function AppLayout() {
           <NavLink to="/resumen-academico">
             Resumen académico
           </NavLink>
+          <Link to="/" className="sidebar-public-link">
+            Salir al inicio
+          </Link>
         </nav>
       </aside>
 
@@ -32,7 +35,7 @@ export default function AppLayout() {
         <header className="topbar">
           <div>
             <p className="eyebrow">Colegio Bernardo O’Higgins</p>
-            <h1>Plataforma de Libro de Clases Digital</h1>
+            <h1>Panel de administración académica</h1>
           </div>
         </header>
 

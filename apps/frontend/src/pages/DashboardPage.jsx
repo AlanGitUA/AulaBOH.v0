@@ -26,17 +26,17 @@ export default function DashboardPage() {
     <main className="page">
       <section className="hero-card">
         <div>
-          <p className="eyebrow">Primera versión funcional</p>
-          <h2>Libro de clases digital AulaBOH</h2>
+          <p className="eyebrow">Panel institucional</p>
+          <h2>Accesos principales del sistema</h2>
           <p>
-            Sistema académico para registrar estudiantes, asistencia, evaluaciones
-            y calificaciones desde una interfaz ordenada e integrada con el BFF.
+            Desde este panel puedes navegar rápidamente a los módulos principales
+            del libro de clases digital AulaBOH.
           </p>
         </div>
 
         <div className="hero-stamp">
-          <span>DSY1106</span>
-          <strong>EP2</strong>
+          <span>Panel</span>
+          <strong>BOH</strong>
         </div>
       </section>
 
