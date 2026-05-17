@@ -3,6 +3,7 @@ package cl.aulaboh.grades.controller;
 import cl.aulaboh.grades.dto.EvaluationResponse;
 import cl.aulaboh.grades.dto.GradeResponse;
 import cl.aulaboh.grades.service.GradeService;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -24,6 +25,9 @@ class GradeControllerWebMvcTest {
 
     @MockBean
     private GradeService service;
+
+    @MockBean
+    private MeterRegistry meterRegistry;
 
     @Test
     void createListAndUpdateEvaluations() throws Exception {

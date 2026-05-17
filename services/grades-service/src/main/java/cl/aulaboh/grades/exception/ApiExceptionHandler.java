@@ -1,5 +1,7 @@
 package cl.aulaboh.grades.exception;
 
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,10 +17,16 @@ import java.util.Map;
 @RestControllerAdvice
 public class ApiExceptionHandler {
     private static final Logger logger = LoggerFactory.getLogger(ApiExceptionHandler.class);
+    private final MeterRegistry meterRegistry;
+
+    public ApiExceptionHandler(MeterRegistry meterRegistry) {
+        this.meterRegistry = meterRegistry;
+    }
 
     @ExceptionHandler(CallNotPermittedException.class)
     public ResponseEntity<Map<String, Object>> circuitBreakerOpen(CallNotPermittedException ex) {
         logger.warn("Circuit Breaker abierto en grades-service | breaker={} | error={}", ex.getCausingCircuitBreakerName(), ex.getMessage());
+        recordError("CircuitBreakerOpen", 503);
         return ResponseEntity.status(503).body(errorBody(
                 "CircuitBreakerOpen",
                 "El servicio de calificaciones esta temporalmente no disponible. Intente nuevamente mas tarde."
@@ -28,12 +36,14 @@ public class ApiExceptionHandler {
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<Map<String,Object>> business(BusinessException ex) {
         logger.warn("Error de negocio en grades-service | error={}", ex.getMessage());
+        recordError("BusinessException", 400);
         return ResponseEntity.badRequest().body(errorBody("BusinessException", ex.getMessage()));
     }
 
     @ExceptionHandler(ExternalServiceUnavailableException.class)
     public ResponseEntity<Map<String,Object>> externalUnavailable(ExternalServiceUnavailableException ex) {
         logger.warn("Servicio externo no disponible desde grades-service | error={}", ex.getMessage());
+        recordError("ExternalServiceUnavailableException", 503);
         return ResponseEntity.status(503).body(errorBody("ExternalServiceUnavailableException", ex.getMessage()));
     }
 
@@ -42,13 +52,27 @@ public class ApiExceptionHandler {
         String message = ex.getBindingResult().getFieldErrors().stream().findFirst()
                 .map(error -> error.getField() + ": " + error.getDefaultMessage()).orElse("Datos invalidos");
         logger.warn("Error de validacion en grades-service | detalle={}", message);
+        recordError("ValidationException", 400);
         return ResponseEntity.badRequest().body(errorBody("ValidationException", message));
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String,Object>> general(Exception ex) {
         logger.error("Error inesperado en grades-service | tipo={} | mensaje={}", ex.getClass().getSimpleName(), ex.getMessage(), ex);
+        recordError(ex.getClass().getSimpleName(), 500);
         return ResponseEntity.internalServerError().body(errorBody(ex.getClass().getSimpleName(), ex.getMessage()));
+    }
+
+    private void recordError(String type, int status) {
+        Counter counter = Counter.builder("aulaboh.api.errors")
+                .description("Errores HTTP manejados por la API")
+                .tag("service", "grades-service")
+                .tag("type", type)
+                .tag("status", String.valueOf(status))
+                .register(meterRegistry);
+        if (counter != null) {
+            counter.increment();
+        }
     }
 
     private Map<String, Object> errorBody(String error, String message) {

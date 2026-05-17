@@ -5,6 +5,7 @@ import cl.aulaboh.attendance.dto.AttendanceSummaryResponse;
 import cl.aulaboh.attendance.dto.ClassResponse;
 import cl.aulaboh.attendance.model.AttendanceStatus;
 import cl.aulaboh.attendance.service.AttendanceService;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -27,6 +28,9 @@ class AttendanceControllerWebMvcTest {
 
     @MockBean
     private AttendanceService service;
+
+    @MockBean
+    private MeterRegistry meterRegistry;
 
     @Test
     void createClassAndListClasses() throws Exception {

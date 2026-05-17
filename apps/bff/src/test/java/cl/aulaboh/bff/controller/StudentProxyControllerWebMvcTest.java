@@ -3,6 +3,7 @@ package cl.aulaboh.bff.controller;
 import cl.aulaboh.bff.client.StudentClient;
 import cl.aulaboh.bff.config.SecurityConfig;
 import cl.aulaboh.bff.dto.StudentResponse;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -27,6 +28,9 @@ class StudentProxyControllerWebMvcTest {
 
     @MockBean
     private StudentClient studentClient;
+
+    @MockBean
+    private MeterRegistry meterRegistry;
 
     @Test
     void createsFindsAndListsStudents() throws Exception {
