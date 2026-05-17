@@ -9,8 +9,12 @@
       "enabled": true,
       "publicClient": true,
       "protocol": "openid-connect",
-      "redirectUris": ["http://localhost:5173/*"],
-      "webOrigins": ["http://localhost:5173"],
+      "redirectUris": [
+        "http://localhost:5173/*"
+      ],
+      "webOrigins": [
+        "http://localhost:5173"
+      ],
       "standardFlowEnabled": true,
       "directAccessGrantsEnabled": true
     },
@@ -28,10 +32,22 @@
   ],
   "roles": {
     "realm": [
-      { "name": "ADMIN", "description": "Administrador del sistema" },
-      { "name": "DOCENTE", "description": "Docente del colegio" },
-      { "name": "ESTUDIANTE", "description": "Estudiante" },
-      { "name": "APODERADO", "description": "Apoderado" }
+      {
+        "name": "ADMIN",
+        "description": "Administrador del sistema"
+      },
+      {
+        "name": "DOCENTE",
+        "description": "Docente del colegio"
+      },
+      {
+        "name": "ESTUDIANTE",
+        "description": "Estudiante"
+      },
+      {
+        "name": "APODERADO",
+        "description": "Apoderado"
+      }
     ]
   },
   "users": [
@@ -42,8 +58,16 @@
       "firstName": "Admin",
       "lastName": "AulaBOH",
       "email": "admin@aulaboh.cl",
-      "credentials": [ { "type": "password", "value": "Admin123", "temporary": false } ],
-      "realmRoles": ["ADMIN"]
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Admin123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "ADMIN"
+      ]
     },
     {
       "username": "docente.demo",
@@ -52,8 +76,52 @@
       "firstName": "Docente",
       "lastName": "Demo",
       "email": "docente@aulaboh.cl",
-      "credentials": [ { "type": "password", "value": "Docente123", "temporary": false } ],
-      "realmRoles": ["DOCENTE"]
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Docente123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "DOCENTE"
+      ]
+    },
+    {
+      "username": "estudiante.demo",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Estudiante",
+      "lastName": "Demo",
+      "email": "estudiante@aulaboh.cl",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Estudiante123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "ESTUDIANTE"
+      ]
+    },
+    {
+      "username": "apoderado.demo",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Apoderado",
+      "lastName": "Demo",
+      "email": "apoderado@aulaboh.cl",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Apoderado123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "APODERADO"
+      ]
     }
   ]
 }

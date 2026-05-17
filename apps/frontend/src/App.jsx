@@ -8,6 +8,9 @@ import DashboardPage from './pages/DashboardPage';
 import StudentsPage from './pages/StudentsPage';
 import AcademicPage from './pages/AcademicPage';
 import SummaryPage from './pages/SummaryPage';
+import UnauthorizedPage from './pages/UnauthorizedPage';
+import ProtectedRoute from './auth/ProtectedRoute';
+import RoleRedirect from './auth/RoleRedirect';
 import './styles.css';
 
 export default function App() {
@@ -21,10 +24,52 @@ export default function App() {
         </Route>
 
         <Route element={<AppLayout />}>
-          <Route path="/panel" element={<DashboardPage />} />
-          <Route path="/estudiantes" element={<StudentsPage />} />
-          <Route path="/gestion-academica" element={<AcademicPage />} />
-          <Route path="/resumen-academico" element={<SummaryPage />} />
+          <Route path="/redirigir-rol" element={<RoleRedirect />} />
+
+          <Route
+            path="/panel"
+            element={
+              <ProtectedRoute allowedRoles={['ADMIN', 'DOCENTE']}>
+                <DashboardPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/estudiantes"
+            element={
+              <ProtectedRoute allowedRoles={['ADMIN']}>
+                <StudentsPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/gestion-academica"
+            element={
+              <ProtectedRoute allowedRoles={['ADMIN', 'DOCENTE']}>
+                <AcademicPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/resumen-academico"
+            element={
+              <ProtectedRoute allowedRoles={['ADMIN', 'DOCENTE', 'ESTUDIANTE', 'APODERADO']}>
+                <SummaryPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/no-autorizado"
+            element={
+              <ProtectedRoute>
+                <UnauthorizedPage />
+              </ProtectedRoute>
+            }
+          />
         </Route>
       </Routes>
     </BrowserRouter>

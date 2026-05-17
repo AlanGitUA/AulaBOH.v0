@@ -1,9 +1,9 @@
 import { Link, NavLink, Outlet } from 'react-router-dom';
-
-const keycloakLoginUrl =
-  import.meta.env.VITE_KEYCLOAK_LOGIN_URL || '/panel';
+import { useAuth } from '../auth/AuthProvider';
 
 export default function PublicLayout() {
+  const { initialized, authenticated, login, logout, fullName } = useAuth();
+
   return (
     <div className="public-site">
       <header className="public-header">
@@ -22,9 +22,23 @@ export default function PublicLayout() {
           <NavLink to="/convivencia-escolar">Convivencia</NavLink>
         </nav>
 
-        <a className="login-button" href={keycloakLoginUrl}>
-          Iniciar sesión
-        </a>
+        <div className="auth-actions">
+          {initialized && authenticated ? (
+            <>
+              <Link className="login-button" to="/redirigir-rol">
+                Mi panel
+              </Link>
+              <button className="secondary-auth-button" type="button" onClick={logout}>
+                Cerrar sesión
+              </button>
+              <small className="session-label">{fullName}</small>
+            </>
+          ) : (
+            <button className="login-button" type="button" onClick={login} disabled={!initialized}>
+              Iniciar sesión
+            </button>
+          )}
+        </div>
       </header>
 
       <Outlet />
