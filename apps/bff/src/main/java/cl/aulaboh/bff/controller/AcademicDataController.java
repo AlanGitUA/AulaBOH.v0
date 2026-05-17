@@ -90,6 +90,22 @@ public class AcademicDataController {
         return gradesClient.createEvaluation(request);
     }
 
+    @PutMapping("/evaluations/{evaluationId}")
+    @Operation(
+            summary = "Actualizar evaluacion desde BFF",
+            description = "Centraliza la actualizacion de evaluaciones para el frontend.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Evaluacion actualizada"),
+                    @ApiResponse(responseCode = "400", description = "Solicitud invalida")
+            }
+    )
+    public EvaluationResponse updateEvaluation(
+            @PathVariable Long evaluationId,
+            @Valid @RequestBody EvaluationRequest request
+    ) {
+        return gradesClient.updateEvaluation(evaluationId, request);
+    }
+
     @GetMapping("/evaluations")
     @Operation(
             summary = "Listar evaluaciones desde BFF",
