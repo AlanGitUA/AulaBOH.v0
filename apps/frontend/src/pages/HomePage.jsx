@@ -1,7 +1,5 @@
 import { Link } from 'react-router-dom';
-
-const keycloakLoginUrl =
-  import.meta.env.VITE_KEYCLOAK_LOGIN_URL || '/panel';
+import { useAuth } from '../auth/AuthProvider';
 
 const publicCards = [
   {
@@ -43,6 +41,8 @@ const publicCards = [
 ];
 
 export default function HomePage() {
+  const { initialized, authenticated, login } = useAuth();
+
   return (
     <main className="home-public-page">
       <section className="public-hero">
@@ -56,9 +56,15 @@ export default function HomePage() {
           </p>
 
           <div className="hero-actions">
-            <a className="primary-button" href={keycloakLoginUrl}>
-              Iniciar sesión
-            </a>
+            {authenticated ? (
+              <Link className="primary-button" to="/redirigir-rol">
+                Ir a mi panel
+              </Link>
+            ) : (
+              <button className="primary-button" type="button" onClick={login} disabled={!initialized}>
+                Iniciar sesión
+              </button>
+            )}
             <Link className="secondary-button" to="/nosotros">
               Conocer el colegio
             </Link>
