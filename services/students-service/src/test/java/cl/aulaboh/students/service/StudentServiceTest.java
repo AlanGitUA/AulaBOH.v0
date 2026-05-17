@@ -79,7 +79,8 @@ class StudentServiceTest {
 
     @Test
     void findByCourseReturnsMatchingStudents() {
-        when(repository.findByCourseIgnoreCase("1\u00b0 B\u00e1sico A")).thenReturn(List.of(student(1L, "Ana", "Rojas", "1\u00b0 B\u00e1sico A", null)));
+        when(repository.findByCourseIgnoreCaseAndStatusIgnoreCase("1\u00b0 B\u00e1sico A", "ACTIVE"))
+                .thenReturn(List.of(student(1L, "Ana", "Rojas", "1\u00b0 B\u00e1sico A", null)));
 
         List<StudentResponse> responses = service.findByCourse("1\u00b0 B\u00e1sico A");
 
@@ -89,7 +90,7 @@ class StudentServiceTest {
 
     @Test
     void findByStudentUsernameReturnsAssociatedStudent() {
-        when(repository.findByStudentUsernameIgnoreCase("estudiante.demo"))
+        when(repository.findByStudentUsernameIgnoreCaseAndStatusIgnoreCase("estudiante.demo", "ACTIVE"))
                 .thenReturn(Optional.of(student(1L, "Ana", "Rojas", "1\u00b0 B\u00e1sico A", "ana@aulaboh.cl")));
 
         StudentResponse response = service.findByStudentUsername("estudiante.demo");
@@ -99,7 +100,7 @@ class StudentServiceTest {
 
     @Test
     void findByGuardianUsernameReturnsRepresentedStudents() {
-        when(repository.findByGuardianUsernameIgnoreCase("apoderado.demo"))
+        when(repository.findByGuardianUsernameIgnoreCaseAndStatusIgnoreCase("apoderado.demo", "ACTIVE"))
                 .thenReturn(List.of(student(1L, "Ana", "Rojas", "1\u00b0 B\u00e1sico A", "ana@aulaboh.cl")));
 
         List<StudentResponse> responses = service.findByGuardianUsername("apoderado.demo");
@@ -109,8 +110,19 @@ class StudentServiceTest {
     }
 
     @Test
+    void deleteMarksStudentAsInactive() {
+        Student existing = student(7L, "Ana", "Rojas", "1\u00b0 B\u00e1sico A", "ana@aulaboh.cl");
+        when(repository.findById(7L)).thenReturn(Optional.of(existing));
+
+        service.delete(7L);
+
+        assertThat(existing.getStatus()).isEqualTo("INACTIVE");
+        verify(repository).save(existing);
+    }
+
+    @Test
     void deleteThrowsWhenStudentDoesNotExist() {
-        when(repository.existsById(7L)).thenReturn(false);
+        when(repository.findById(7L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.delete(7L))
                 .isInstanceOf(StudentNotFoundException.class);

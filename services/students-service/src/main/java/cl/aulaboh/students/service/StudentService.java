@@ -13,6 +13,8 @@ import java.util.List;
 
 @Service
 public class StudentService {
+    private static final String ACTIVE_STATUS = "ACTIVE";
+    private static final String INACTIVE_STATUS = "INACTIVE";
     private final StudentRepository repository;
 
     public StudentService(StudentRepository repository) {
@@ -28,7 +30,7 @@ public class StudentService {
 
     @CircuitBreaker(name = "studentsServiceMethods")
     public List<StudentResponse> findAll() {
-        return repository.findAll().stream().map(this::toResponse).toList();
+        return repository.findByStatusIgnoreCase(ACTIVE_STATUS).stream().map(this::toResponse).toList();
     }
 
     @CircuitBreaker(name = "studentsServiceMethods")
@@ -38,19 +40,19 @@ public class StudentService {
 
     @CircuitBreaker(name = "studentsServiceMethods")
     public List<StudentResponse> findByCourse(String course) {
-        return repository.findByCourseIgnoreCase(course).stream().map(this::toResponse).toList();
+        return repository.findByCourseIgnoreCaseAndStatusIgnoreCase(course, ACTIVE_STATUS).stream().map(this::toResponse).toList();
     }
 
     @CircuitBreaker(name = "studentsServiceMethods")
     public StudentResponse findByStudentUsername(String username) {
-        return repository.findByStudentUsernameIgnoreCase(username)
+        return repository.findByStudentUsernameIgnoreCaseAndStatusIgnoreCase(username, ACTIVE_STATUS)
                 .map(this::toResponse)
                 .orElseThrow(() -> new StudentNotFoundException(username));
     }
 
     @CircuitBreaker(name = "studentsServiceMethods")
     public List<StudentResponse> findByGuardianUsername(String username) {
-        return repository.findByGuardianUsernameIgnoreCase(username).stream().map(this::toResponse).toList();
+        return repository.findByGuardianUsernameIgnoreCaseAndStatusIgnoreCase(username, ACTIVE_STATUS).stream().map(this::toResponse).toList();
     }
 
     @CircuitBreaker(name = "studentsServiceMethods")
@@ -69,8 +71,9 @@ public class StudentService {
 
     @CircuitBreaker(name = "studentsServiceMethods")
     public void delete(Long id) {
-        if (!repository.existsById(id)) throw new StudentNotFoundException(id);
-        repository.deleteById(id);
+        Student student = repository.findById(id).orElseThrow(() -> new StudentNotFoundException(id));
+        student.setStatus(INACTIVE_STATUS);
+        repository.save(student);
     }
 
     private void validateUniqueStudentUsername(String username) {

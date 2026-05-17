@@ -28,7 +28,7 @@ export default function StudentsPage() {
   };
 
   const handleDelete = async (studentId) => {
-    if (!window.confirm('Confirma que deseas eliminar este estudiante.')) {
+    if (!window.confirm('Confirma que deseas desactivar este estudiante.')) {
       return;
     }
     setMessage('');
@@ -38,10 +38,10 @@ export default function StudentsPage() {
       if (editingStudent?.id === studentId) {
         setEditingStudent(null);
       }
-      setMessage('Estudiante eliminado correctamente.');
+      setMessage('Estudiante desactivado correctamente.');
     } catch (error) {
       console.error(error);
-      setMessage('No se pudo eliminar el estudiante.');
+      setMessage('No se pudo desactivar el estudiante.');
     }
   };
 
@@ -96,7 +96,7 @@ export default function StudentsPage() {
                           Editar
                         </button>
                         <button type="button" className="table-link-button danger" onClick={() => handleDelete(student.id)}>
-                          Eliminar
+                          Desactivar
                         </button>
                       </div>
                     </td>
