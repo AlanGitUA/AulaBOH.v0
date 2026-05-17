@@ -11,7 +11,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class ServiceLoggingAspectTest {
-    private final ServiceLoggingAspect aspect = new ServiceLoggingAspect(new SimpleMeterRegistry());
+    private final SimpleMeterRegistry meterRegistry = new SimpleMeterRegistry();
+    private final ServiceLoggingAspect aspect = new ServiceLoggingAspect(meterRegistry);
     private final ProceedingJoinPoint joinPoint = mock(ProceedingJoinPoint.class);
     private final Signature signature = mock(Signature.class);
 
@@ -23,6 +24,9 @@ class ServiceLoggingAspectTest {
         Object result = aspect.logExecutionTime(joinPoint);
 
         assertThat(result).isEqualTo("ok");
+        assertThat(meterRegistry.find("aulaboh.method.execution")
+                .tags("service", "bff", "class", "SampleFacade", "method", "execute", "outcome", "success")
+                .timer()).isNotNull();
     }
 
     @Test
@@ -33,6 +37,9 @@ class ServiceLoggingAspectTest {
         assertThatThrownBy(() -> aspect.logExecutionTime(joinPoint))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessage("fallo controlado");
+        assertThat(meterRegistry.find("aulaboh.method.execution")
+                .tags("service", "bff", "class", "SampleFacade", "method", "execute", "outcome", "error")
+                .timer()).isNotNull();
     }
 
     private void prepareSignature() {

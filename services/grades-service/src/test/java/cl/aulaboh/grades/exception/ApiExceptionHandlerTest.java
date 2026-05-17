@@ -11,7 +11,8 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ApiExceptionHandlerTest {
-    private final ApiExceptionHandler handler = new ApiExceptionHandler(new SimpleMeterRegistry());
+    private final SimpleMeterRegistry meterRegistry = new SimpleMeterRegistry();
+    private final ApiExceptionHandler handler = new ApiExceptionHandler(meterRegistry);
 
     @Test
     void returnsServiceUnavailableWhenCircuitBreakerIsOpen() {
@@ -20,6 +21,7 @@ class ApiExceptionHandlerTest {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SERVICE_UNAVAILABLE);
         assertBody(response.getBody(), "CircuitBreakerOpen",
                 "El servicio de calificaciones esta temporalmente no disponible. Intente nuevamente mas tarde.");
+        assertErrorMetric("CircuitBreakerOpen", "503");
     }
 
     @Test
@@ -28,6 +30,7 @@ class ApiExceptionHandlerTest {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         assertBody(response.getBody(), "BusinessException", "La evaluacion no existe");
+        assertErrorMetric("BusinessException", "400");
     }
 
     @Test
@@ -37,6 +40,7 @@ class ApiExceptionHandlerTest {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SERVICE_UNAVAILABLE);
         assertBody(response.getBody(), "ExternalServiceUnavailableException",
                 "students-service no esta disponible temporalmente.");
+        assertErrorMetric("ExternalServiceUnavailableException", "503");
     }
 
     @Test
@@ -45,6 +49,7 @@ class ApiExceptionHandlerTest {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
         assertBody(response.getBody(), "RuntimeException", "Sin detalle disponible");
+        assertErrorMetric("RuntimeException", "500");
     }
 
     private CallNotPermittedException openCircuitBreakerException(String name) {
@@ -57,5 +62,11 @@ class ApiExceptionHandlerTest {
         assertThat(body).isNotNull();
         assertThat(body).containsEntry("error", error).containsEntry("message", message);
         assertThat(body).containsKey("timestamp");
+    }
+
+    private void assertErrorMetric(String type, String status) {
+        assertThat(meterRegistry.find("aulaboh.api.errors")
+                .tags("service", "grades-service", "type", type, "status", status)
+                .counter()).isNotNull();
     }
 }
