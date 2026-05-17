@@ -37,6 +37,8 @@ public class SecurityConfig {
                         ).permitAll()
                         .requestMatchers("/api/bff/me/**").hasAnyRole("ADMIN", "DOCENTE", "ESTUDIANTE", "APODERADO")
                         .requestMatchers(HttpMethod.POST, "/api/bff/students", "/api/students").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/bff/students/**", "/api/students/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/bff/students/**", "/api/students/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/bff/students", "/api/students").hasAnyRole("ADMIN", "DOCENTE")
                         .requestMatchers("/api/bff/students/**", "/api/bff/classes/**", "/api/bff/attendances/**",
                                 "/api/bff/evaluations/**", "/api/bff/grades/**", "/api/students/**")

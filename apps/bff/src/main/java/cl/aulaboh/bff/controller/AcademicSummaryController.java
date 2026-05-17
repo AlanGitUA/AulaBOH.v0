@@ -39,6 +39,17 @@ public class AcademicSummaryController {
     )
     public StudentResponse createStudent(@Valid @RequestBody StudentRequest request) { return facade.createStudent(request); }
 
+    @PutMapping("/students/{studentId}")
+    public StudentResponse updateStudent(@PathVariable Long studentId, @Valid @RequestBody StudentRequest request) {
+        return facade.updateStudent(studentId, request);
+    }
+
+    @DeleteMapping("/students/{studentId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteStudent(@PathVariable Long studentId) {
+        facade.deleteStudent(studentId);
+    }
+
     @GetMapping("/students/{studentId}/summary")
     @Operation(
             summary = "Obtener resumen academico",

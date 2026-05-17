@@ -19,8 +19,10 @@ import java.util.List;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = {AcademicSummaryController.class, AcademicDataController.class})
@@ -75,6 +77,25 @@ class BffSecurityWebMvcTest {
                                   "course":"1A"
                                 }
                                 """))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void rejectsTeacherFromUpdatingAndDeletingStudents() throws Exception {
+        mockMvc.perform(put("/api/bff/students/1")
+                        .with(jwt().authorities(new SimpleGrantedAuthority("ROLE_DOCENTE")))
+                        .contentType("application/json")
+                        .content("""
+                                {
+                                  "firstName":"Ana",
+                                  "lastName":"Rojas",
+                                  "course":"1A"
+                                }
+                                """))
+                .andExpect(status().isForbidden());
+
+        mockMvc.perform(delete("/api/bff/students/1")
+                        .with(jwt().authorities(new SimpleGrantedAuthority("ROLE_DOCENTE"))))
                 .andExpect(status().isForbidden());
     }
 
