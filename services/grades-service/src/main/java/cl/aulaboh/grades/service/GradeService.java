@@ -36,6 +36,17 @@ public class GradeService {
     }
 
     @CircuitBreaker(name = "gradesServiceMethods")
+    public EvaluationResponse updateEvaluation(Long id, EvaluationRequest request) {
+        Evaluation evaluation = evaluationRepository.findById(id)
+                .orElseThrow(() -> new BusinessException("La evaluacion no existe"));
+        evaluation.setCourse(request.getCourse());
+        evaluation.setSubject(request.getSubject());
+        evaluation.setTitle(request.getTitle());
+        evaluation.setEvaluationDate(request.getEvaluationDate());
+        return toEvaluationResponse(evaluationRepository.save(evaluation));
+    }
+
+    @CircuitBreaker(name = "gradesServiceMethods")
     public GradeResponse registerGrade(GradeRequest request) {
         if (request.getScore() < 1.0 || request.getScore() > 7.0) throw new BusinessException("La nota debe estar entre 1.0 y 7.0");
         studentClient.findStudentById(request.getStudentId());

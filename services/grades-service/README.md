@@ -20,6 +20,7 @@ Puerto: `8083`
 
 - `POST /api/evaluations`
 - `GET /api/evaluations`
+- `PUT /api/evaluations/{id}`
 - `POST /api/grades`
 - `GET /api/grades/student/{studentId}`
 

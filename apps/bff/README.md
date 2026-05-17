@@ -26,6 +26,7 @@ Puerto: `8080`
 - `POST /api/bff/attendances`
 - `GET /api/bff/attendances/student/{studentId}`
 - `POST /api/bff/evaluations`
+- `PUT /api/bff/evaluations/{evaluationId}`
 - `GET /api/bff/evaluations`
 - `POST /api/bff/grades`
 

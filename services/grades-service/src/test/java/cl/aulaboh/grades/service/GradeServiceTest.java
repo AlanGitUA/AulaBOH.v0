@@ -59,6 +59,29 @@ class GradeServiceTest {
     }
 
     @Test
+    void updateEvaluationPersistsChanges() {
+        Evaluation existing = evaluation(1L, "1A", "Matematica", "Prueba 1");
+        Evaluation updated = evaluation(1L, "2B", "Historia", "Ensayo 1");
+        when(evaluationRepository.findById(1L)).thenReturn(Optional.of(existing));
+        when(evaluationRepository.save(existing)).thenReturn(updated);
+
+        var response = service.updateEvaluation(1L, evaluationRequest("2B", "Historia", "Ensayo 1"));
+
+        assertThat(response.course()).isEqualTo("2B");
+        assertThat(response.subject()).isEqualTo("Historia");
+        assertThat(response.title()).isEqualTo("Ensayo 1");
+    }
+
+    @Test
+    void updateEvaluationRejectsMissingEvaluation() {
+        when(evaluationRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> service.updateEvaluation(1L, evaluationRequest("2B", "Historia", "Ensayo 1")))
+                .isInstanceOf(BusinessException.class)
+                .hasMessageContaining("evaluacion");
+    }
+
+    @Test
     void registerGradePersistsValidScore() {
         Evaluation evaluation = evaluation(1L, "1A", "Matematica", "Prueba 1");
         Grade saved = grade(10L, evaluation, 5L, 6.5);
