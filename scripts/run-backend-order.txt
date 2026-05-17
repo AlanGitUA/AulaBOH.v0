@@ -1,0 +1,21 @@
+1. cd C:\proyectos\AulaBOH.v0\platform\discovery-server
+   mvn spring-boot:run
+
+2. cd C:\proyectos\AulaBOH.v0\services\students-service
+   mvn spring-boot:run
+
+3. cd C:\proyectos\AulaBOH.v0\services\attendance-service
+   mvn spring-boot:run
+
+4. cd C:\proyectos\AulaBOH.v0\services\grades-service
+   mvn spring-boot:run
+
+5. cd C:\proyectos\AulaBOH.v0\apps\bff
+   mvn spring-boot:run
+
+6. cd C:\proyectos\AulaBOH.v0\platform\api-gateway
+   mvn spring-boot:run
+
+7. cd C:\proyectos\AulaBOH.v0\apps\frontend
+   npm install
+   npm run dev
