@@ -8,6 +8,9 @@ export const bffApi = {
       body: JSON.stringify(data),
     }),
   studentSummary: (studentId) => request(`/api/bff/students/${studentId}/summary`),
+  ownStudentSummary: () => request('/api/bff/me/summary'),
+  myStudents: () => request('/api/bff/me/students'),
+  myStudentSummary: (studentId) => request(`/api/bff/me/students/${studentId}/summary`),
 
   listClasses: () => request('/api/bff/classes'),
   createClass: (data) =>

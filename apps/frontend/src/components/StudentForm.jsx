@@ -1,7 +1,14 @@
 import { useState } from 'react';
 import { studentApi } from '../services/studentApi';
 
-const initialForm = { firstName: '', lastName: '', course: '', email: '' };
+const initialForm = {
+  firstName: '',
+  lastName: '',
+  course: '',
+  email: '',
+  studentUsername: '',
+  guardianUsername: '',
+};
 
 export default function StudentForm({ onCreated }) {
   const [form, setForm] = useState(initialForm);
@@ -30,6 +37,8 @@ export default function StudentForm({ onCreated }) {
       <input name="lastName" placeholder="Apellido" value={form.lastName} onChange={update} required />
       <input name="course" placeholder="Curso" value={form.course} onChange={update} required />
       <input name="email" type="email" placeholder="Correo" value={form.email} onChange={update} />
+      <input name="studentUsername" placeholder="Usuario Keycloak del estudiante" value={form.studentUsername} onChange={update} />
+      <input name="guardianUsername" placeholder="Usuario Keycloak del apoderado" value={form.guardianUsername} onChange={update} />
       <button type="submit">Guardar</button>
       {message && <small>{message}</small>}
     </form>

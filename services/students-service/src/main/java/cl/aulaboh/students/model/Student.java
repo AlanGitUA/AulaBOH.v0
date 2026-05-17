@@ -17,6 +17,8 @@ public class Student {
     private String course;
     private String email;
     private LocalDate birthDate;
+    private String studentUsername;
+    private String guardianUsername;
     @Column(nullable = false)
     private String status;
 
@@ -32,6 +34,10 @@ public class Student {
     public void setEmail(String email) { this.email = email; }
     public LocalDate getBirthDate() { return birthDate; }
     public void setBirthDate(LocalDate birthDate) { this.birthDate = birthDate; }
+    public String getStudentUsername() { return studentUsername; }
+    public void setStudentUsername(String studentUsername) { this.studentUsername = studentUsername; }
+    public String getGuardianUsername() { return guardianUsername; }
+    public void setGuardianUsername(String guardianUsername) { this.guardianUsername = guardianUsername; }
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
 }

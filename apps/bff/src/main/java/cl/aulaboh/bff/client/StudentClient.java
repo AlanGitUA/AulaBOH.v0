@@ -37,6 +37,16 @@ public class StudentClient {
         return restTemplate.getForObject(baseUrl + "/api/students", StudentResponse[].class);
     }
 
+    @CircuitBreaker(name = "studentsService", fallbackMethod = "findByStudentUsernameFallback")
+    public StudentResponse findByStudentUsername(String username) {
+        return restTemplate.getForObject(baseUrl + "/api/students/username/" + username, StudentResponse.class);
+    }
+
+    @CircuitBreaker(name = "studentsService", fallbackMethod = "findByGuardianUsernameFallback")
+    public StudentResponse[] findByGuardianUsername(String username) {
+        return restTemplate.getForObject(baseUrl + "/api/students/guardian/" + username, StudentResponse[].class);
+    }
+
     private StudentResponse createFallback(StudentRequest request, Throwable ex) {
         logger.warn("Circuit Breaker activado en BFF -> students-service | metodo=create | error={}", ex.getMessage(), ex);
         throw new DownstreamServiceUnavailableException("students-service");
@@ -49,6 +59,16 @@ public class StudentClient {
 
     private StudentResponse[] findAllFallback(Throwable ex) {
         logger.warn("Circuit Breaker activado en BFF -> students-service | metodo=findAll | respuesta degradada=[] | error={}", ex.getMessage(), ex);
+        return new StudentResponse[0];
+    }
+
+    private StudentResponse findByStudentUsernameFallback(String username, Throwable ex) {
+        logger.warn("Circuit Breaker activado en BFF -> students-service | metodo=findByStudentUsername | username={} | error={}", username, ex.getMessage(), ex);
+        throw new DownstreamServiceUnavailableException("students-service");
+    }
+
+    private StudentResponse[] findByGuardianUsernameFallback(String username, Throwable ex) {
+        logger.warn("Circuit Breaker activado en BFF -> students-service | metodo=findByGuardianUsername | username={} | respuesta degradada=[] | error={}", username, ex.getMessage(), ex);
         return new StudentResponse[0];
     }
 }

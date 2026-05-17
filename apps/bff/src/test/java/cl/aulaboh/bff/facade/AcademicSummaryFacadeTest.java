@@ -93,6 +93,29 @@ class AcademicSummaryFacadeTest {
         assertThat(response.grades()).isEmpty();
     }
 
+    @Test
+    void getOwnStudentSummaryUsesAuthenticatedStudentMapping() {
+        StudentResponse student = student(1L, "Ana", "Rojas", "1A");
+        when(studentClient.findByStudentUsername("estudiante.demo")).thenReturn(student);
+        when(studentClient.findById(1L)).thenReturn(student);
+        when(attendanceClient.summary(1L)).thenReturn(new AttendanceSummaryResponse(1L, 0L, 0L, 0L));
+        when(gradesClient.gradesByStudent(1L)).thenReturn(new GradeResponse[0]);
+
+        AcademicSummaryResponse response = facade.getOwnStudentSummary("estudiante.demo");
+
+        assertThat(response.student()).isEqualTo(student);
+    }
+
+    @Test
+    void findGuardianStudentsReturnsOnlyAssignedStudents() {
+        StudentResponse student = student(1L, "Ana", "Rojas", "1A");
+        when(studentClient.findByGuardianUsername("apoderado.demo")).thenReturn(new StudentResponse[]{student});
+
+        List<StudentResponse> students = facade.findGuardianStudents("apoderado.demo");
+
+        assertThat(students).containsExactly(student);
+    }
+
     private StudentRequest studentRequest(String firstName, String lastName, String course) {
         StudentRequest request = new StudentRequest();
         request.setFirstName(firstName);
@@ -104,6 +127,15 @@ class AcademicSummaryFacadeTest {
     }
 
     private StudentResponse student(Long id, String firstName, String lastName, String course) {
-        return new StudentResponse(id, firstName, lastName, course, firstName.toLowerCase() + "@aulaboh.cl", "ACTIVE");
+        return new StudentResponse(
+                id,
+                firstName,
+                lastName,
+                course,
+                firstName.toLowerCase() + "@aulaboh.cl",
+                "estudiante.demo",
+                "apoderado.demo",
+                "ACTIVE"
+        );
     }
 }
