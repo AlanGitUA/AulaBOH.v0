@@ -37,6 +37,19 @@ public class GradeController {
     )
     public List<EvaluationResponse> evaluations(@RequestParam(required = false) String course) { return service.findEvaluations(course); }
 
+    @PutMapping("/evaluations/{id}")
+    @Operation(
+            summary = "Actualizar evaluacion",
+            description = "Actualiza los datos de una evaluacion existente.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Evaluacion actualizada"),
+                    @ApiResponse(responseCode = "400", description = "Solicitud invalida")
+            }
+    )
+    public EvaluationResponse updateEvaluation(@PathVariable Long id, @Valid @RequestBody EvaluationRequest request) {
+        return service.updateEvaluation(id, request);
+    }
+
     @PostMapping("/grades") @ResponseStatus(HttpStatus.CREATED)
     @Operation(
             summary = "Registrar calificacion",
