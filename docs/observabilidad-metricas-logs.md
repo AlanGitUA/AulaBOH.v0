@@ -74,6 +74,6 @@ Se habilitaron endpoints:
 6. Consultar desde el BFF un endpoint que dependa de estudiantes.
 7. Verificar logs de fallback y respuesta controlada.
 
-## Explicación para el profesor
+## Comportamiento esperado
 
 Se implementó observabilidad transversal con AOP para medir tiempos de respuesta en los métodos críticos de los servicios. También se aplicó Circuit Breaker para evitar que fallas repetidas afecten todo el sistema. Cuando un microservicio no responde o el Circuit Breaker se abre, el sistema registra el evento y entrega una respuesta controlada mediante el handler global de excepciones.

@@ -74,7 +74,7 @@ export default function HomePage() {
         <div className="hero-visual-card">
           <div className="hero-image-frame">
             <span>Imagen institucional del colegio</span>
-            <small>Luego reemplazamos este bloque por una imagen real o generada.</small>
+            <small>Imagen institucional del establecimiento.</small>
           </div>
         </div>
       </section>

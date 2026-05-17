@@ -4,14 +4,14 @@
 
 El botón **Iniciar sesión** del sitio público redirige a Keycloak. Después del login, el frontend lee los roles del token y envía al usuario solo al panel permitido.
 
-## Usuarios de prueba
+## Usuarios iniciales
 
 | Usuario | Contraseña | Rol | Acceso esperado |
 |---|---|---|---|
 | admin.aulaboh | Admin123 | ADMIN | Panel, estudiantes, gestión académica y resumen académico |
 | docente.demo | Docente123 | DOCENTE | Gestión académica y resumen académico |
-| estudiante.demo | Estudiante123 | ESTUDIANTE | Solo resumen académico |
-| apoderado.demo | Apoderado123 | APODERADO | Solo resumen académico |
+| estudiante.demo | Estudiante123 | ESTUDIANTE | Resumen del estudiante asociado a la cuenta |
+| apoderado.demo | Apoderado123 | APODERADO | Resumen de estudiantes asociados a la cuenta |
 
 ## Rutas protegidas
 
@@ -37,14 +37,14 @@ El botón **Iniciar sesión** del sitio público redirige a Keycloak. Después d
 Levantar Keycloak:
 
 ```powershell
-cd C:\proyectos\AulaBOH.v0\platform\keycloak
+cd platform/keycloak
 docker compose up -d
 ```
 
 Frontend:
 
 ```powershell
-cd C:\proyectos\AulaBOH.v0\apps\frontend
+cd apps/frontend
 npm install
 npm run dev
 ```
