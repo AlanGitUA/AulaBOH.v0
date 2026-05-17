@@ -30,6 +30,15 @@ class ApiExceptionHandlerTest {
     }
 
     @Test
+    void returnsNotFoundForMissingStudentUsername() {
+        var response = handler.notFound(new StudentNotFoundException("estudiante.demo"));
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertBody(response.getBody(), "StudentNotFoundException",
+                "No existe un estudiante asociado al usuario estudiante.demo");
+    }
+
+    @Test
     void returnsInternalServerErrorForUnexpectedExceptionWithoutDetail() {
         var response = handler.general(new RuntimeException());
 
