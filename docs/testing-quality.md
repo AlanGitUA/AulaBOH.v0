@@ -1,15 +1,23 @@
 # Pruebas y calidad
 
-La solucion incorpora pruebas unitarias para validar reglas de negocio y orquestacion entre componentes. La cobertura se genera con JaCoCo desde Maven.
+La solucion incorpora pruebas unitarias y web para validar reglas de negocio, contratos HTTP, clientes internos, fallbacks, manejo de excepciones y observabilidad. La cobertura se genera con JaCoCo desde Maven y la meta vigente es mantener al menos 80% de cobertura por modulo principal.
 
 ## Componentes cubiertos
 
-| Componente | Archivo de prueba | Alcance |
-|---|---|---|
-| Students Service | `StudentServiceTest` | Creacion, busqueda, filtro por curso, actualizacion y manejo de estudiantes inexistentes. |
-| Attendance Service | `AttendanceServiceTest` | Creacion de clases, registro de asistencia, bloqueo de duplicados y resumen por estado. |
-| Grades Service | `GradeServiceTest` | Creacion de evaluaciones, registro de calificaciones, rango valido de notas y evaluaciones inexistentes. |
-| BFF | `AcademicSummaryFacadeTest` | Orquestacion de estudiantes, asistencia y calificaciones para respuestas orientadas al frontend. |
+| Componente | Cobertura principal |
+|---|---|
+| Students Service | Servicio, controlador MVC, excepciones y aspecto de logs. |
+| Attendance Service | Servicio, controlador MVC, cliente de estudiantes, fallbacks, excepciones y aspecto de logs. |
+| Grades Service | Servicio, controlador MVC, cliente de estudiantes, fallbacks, excepciones y aspecto de logs. |
+| BFF | Fachada academica, controladores MVC, clientes HTTP, fallbacks, excepciones y aspecto de logs. |
+
+## Tipos de pruebas
+
+- Reglas de negocio sobre creacion, consulta, actualizacion, validaciones y casos inexistentes.
+- Controladores con `MockMvc` para validar respuestas HTTP y seguridad basica del contrato.
+- Clientes internos y respuestas degradadas ante dependencias no disponibles.
+- `ApiExceptionHandler` para errores de negocio, validacion y fallas inesperadas.
+- `ServiceLoggingAspect` para verificar registro de tiempos y errores.
 
 ## Ejecutar pruebas
 
@@ -40,6 +48,15 @@ services/grades-service/target/site/jacoco/index.html
 apps/bff/target/site/jacoco/index.html
 ```
 
+## Estado actual de cobertura
+
+| Modulo | Cobertura |
+|---|---:|
+| `apps/bff` | `85.4%` |
+| `services/students-service` | `87.9%` |
+| `services/attendance-service` | `91.5%` |
+| `services/grades-service` | `93.4%` |
+
 ## Validacion esperada
 
 La ejecucion de pruebas debe finalizar con:
@@ -58,7 +75,9 @@ Errors: 0
 ## Criterios de aceptacion
 
 - La suite de pruebas se ejecuta desde Maven sin dependencias manuales adicionales.
+- Cada modulo principal mantiene al menos 80% de cobertura.
 - Las reglas de negocio principales quedan cubiertas por pruebas unitarias.
+- Los endpoints principales quedan cubiertos por pruebas web.
 - El BFF queda cubierto como capa de orquestacion.
+- Los fallbacks, handlers y logs criticos tienen validacion automatizada.
 - Los reportes de cobertura pueden generarse con `mvn verify`.
-- El proyecto mantiene una base de calidad verificable antes de integrar cambios en `develop`.

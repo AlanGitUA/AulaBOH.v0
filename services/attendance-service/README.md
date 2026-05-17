@@ -4,8 +4,8 @@ Microservicio de clases y asistencia.
 
 ## Patrones demostrados
 
-- **Repository Pattern:** `AttendanceRepository` y `SchoolClassRepository` aíslan el acceso a datos.
-- **Adapter/Client Pattern:** `client/StudentClient.java` encapsula la comunicación con `students-service`.
+- **Repository Pattern:** `AttendanceRepository` y `SchoolClassRepository` aislan el acceso a datos.
+- **Adapter/Client Pattern:** `client/StudentClient.java` encapsula la comunicacion con `students-service`.
 - **Arquitectura en capas:** `controller`, `service`, `repository`, `model`, `dto`.
 
 ## Ejecutar
