@@ -41,6 +41,13 @@ public class ApiExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorBody("StudentNotFoundException", ex.getMessage()));
     }
 
+    @ExceptionHandler(DuplicateStudentUsernameException.class)
+    public ResponseEntity<Map<String, Object>> duplicateUsername(DuplicateStudentUsernameException ex) {
+        logger.warn("Usuario de estudiante duplicado | error={}", ex.getMessage());
+        recordError("DuplicateStudentUsernameException", 409);
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorBody("DuplicateStudentUsernameException", ex.getMessage()));
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> validation(MethodArgumentNotValidException ex) {
         String message = ex.getBindingResult().getFieldErrors().stream().findFirst()

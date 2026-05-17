@@ -42,6 +42,16 @@ public class AcademicSummaryFacade {
     }
 
     @CircuitBreaker(name = "bffFacade")
+    public StudentResponse updateStudent(Long studentId, StudentRequest request) {
+        return studentClient.update(studentId, request);
+    }
+
+    @CircuitBreaker(name = "bffFacade")
+    public void deleteStudent(Long studentId) {
+        studentClient.delete(studentId);
+    }
+
+    @CircuitBreaker(name = "bffFacade")
     public AcademicSummaryResponse getOwnStudentSummary(String username) {
         StudentResponse student = studentClient.findByStudentUsername(username);
         return getStudentSummary(student.id());

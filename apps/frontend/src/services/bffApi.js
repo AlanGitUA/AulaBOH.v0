@@ -7,6 +7,15 @@ export const bffApi = {
       method: 'POST',
       body: JSON.stringify(data),
     }),
+  updateStudent: (studentId, data) =>
+    request(`/api/bff/students/${studentId}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    }),
+  deleteStudent: (studentId) =>
+    request(`/api/bff/students/${studentId}`, {
+      method: 'DELETE',
+    }),
   studentSummary: (studentId) => request(`/api/bff/students/${studentId}/summary`),
   ownStudentSummary: () => request('/api/bff/me/summary'),
   myStudents: () => request('/api/bff/me/students'),

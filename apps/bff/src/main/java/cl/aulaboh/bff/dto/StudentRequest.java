@@ -2,6 +2,7 @@ package cl.aulaboh.bff.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import java.time.LocalDate;
 
 public class StudentRequest {
@@ -10,6 +11,10 @@ public class StudentRequest {
     @NotBlank(message = "El apellido es obligatorio")
     private String lastName;
     @NotBlank(message = "El curso es obligatorio")
+    @Pattern(
+            regexp = "^(?:[1-8]\\u00b0 B\\u00e1sico|[1-4]\\u00b0 Medio) [ABC]$",
+            message = "El curso debe ser un nivel valido entre 1° Basico A y 4° Medio C"
+    )
     private String course;
     @Email(message = "El correo debe tener formato valido")
     private String email;

@@ -7,7 +7,10 @@ import java.util.Optional;
 
 /** Repository Pattern: abstrae la persistencia de estudiantes. */
 public interface StudentRepository extends JpaRepository<Student, Long> {
-    List<Student> findByCourseIgnoreCase(String course);
-    Optional<Student> findByStudentUsernameIgnoreCase(String studentUsername);
-    List<Student> findByGuardianUsernameIgnoreCase(String guardianUsername);
+    List<Student> findByStatusIgnoreCase(String status);
+    List<Student> findByCourseIgnoreCaseAndStatusIgnoreCase(String course, String status);
+    Optional<Student> findByStudentUsernameIgnoreCaseAndStatusIgnoreCase(String studentUsername, String status);
+    List<Student> findByGuardianUsernameIgnoreCaseAndStatusIgnoreCase(String guardianUsername, String status);
+    boolean existsByStudentUsernameIgnoreCase(String studentUsername);
+    boolean existsByStudentUsernameIgnoreCaseAndIdNot(String studentUsername, Long id);
 }

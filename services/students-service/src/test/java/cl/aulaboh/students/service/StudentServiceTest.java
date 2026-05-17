@@ -2,6 +2,7 @@ package cl.aulaboh.students.service;
 
 import cl.aulaboh.students.dto.StudentRequest;
 import cl.aulaboh.students.dto.StudentResponse;
+import cl.aulaboh.students.exception.DuplicateStudentUsernameException;
 import cl.aulaboh.students.exception.StudentNotFoundException;
 import cl.aulaboh.students.model.Student;
 import cl.aulaboh.students.repository.StudentRepository;
@@ -31,21 +32,21 @@ class StudentServiceTest {
 
     @Test
     void createPersistsActiveStudent() {
-        Student saved = student(1L, "Ana", "Rojas", "1A", "ana@aulaboh.cl");
+        Student saved = student(1L, "Ana", "Rojas", "1\u00b0 B\u00e1sico A", "ana@aulaboh.cl");
         when(repository.save(org.mockito.ArgumentMatchers.any(Student.class))).thenReturn(saved);
 
-        StudentResponse response = service.create(request("Ana", "Rojas", "1A", "ana@aulaboh.cl"));
+        StudentResponse response = service.create(request("Ana", "Rojas", "1\u00b0 B\u00e1sico A", "ana@aulaboh.cl"));
 
         ArgumentCaptor<Student> captor = ArgumentCaptor.forClass(Student.class);
         verify(repository).save(captor.capture());
         assertThat(captor.getValue().getStatus()).isEqualTo("ACTIVE");
         assertThat(response.id()).isEqualTo(1L);
-        assertThat(response.course()).isEqualTo("1A");
+        assertThat(response.course()).isEqualTo("1\u00b0 B\u00e1sico A");
     }
 
     @Test
     void findByIdReturnsStudentWhenExists() {
-        when(repository.findById(1L)).thenReturn(Optional.of(student(1L, "Ana", "Rojas", "1A", "ana@aulaboh.cl")));
+        when(repository.findById(1L)).thenReturn(Optional.of(student(1L, "Ana", "Rojas", "1\u00b0 B\u00e1sico A", "ana@aulaboh.cl")));
 
         StudentResponse response = service.findById(1L);
 
@@ -64,32 +65,33 @@ class StudentServiceTest {
 
     @Test
     void updateChangesStudentFields() {
-        Student existing = student(1L, "Ana", "Rojas", "1A", "ana@aulaboh.cl");
-        Student updated = student(1L, "Ana Maria", "Rojas", "2B", "anamaria@aulaboh.cl");
+        Student existing = student(1L, "Ana", "Rojas", "1\u00b0 B\u00e1sico A", "ana@aulaboh.cl");
+        Student updated = student(1L, "Ana Maria", "Rojas", "2\u00b0 Medio B", "anamaria@aulaboh.cl");
         when(repository.findById(1L)).thenReturn(Optional.of(existing));
         when(repository.save(existing)).thenReturn(updated);
 
-        StudentResponse response = service.update(1L, request("Ana Maria", "Rojas", "2B", "anamaria@aulaboh.cl"));
+        StudentResponse response = service.update(1L, request("Ana Maria", "Rojas", "2\u00b0 Medio B", "anamaria@aulaboh.cl"));
 
         assertThat(existing.getFirstName()).isEqualTo("Ana Maria");
-        assertThat(existing.getCourse()).isEqualTo("2B");
+        assertThat(existing.getCourse()).isEqualTo("2\u00b0 Medio B");
         assertThat(response.email()).isEqualTo("anamaria@aulaboh.cl");
     }
 
     @Test
     void findByCourseReturnsMatchingStudents() {
-        when(repository.findByCourseIgnoreCase("1A")).thenReturn(List.of(student(1L, "Ana", "Rojas", "1A", null)));
+        when(repository.findByCourseIgnoreCaseAndStatusIgnoreCase("1\u00b0 B\u00e1sico A", "ACTIVE"))
+                .thenReturn(List.of(student(1L, "Ana", "Rojas", "1\u00b0 B\u00e1sico A", null)));
 
-        List<StudentResponse> responses = service.findByCourse("1A");
+        List<StudentResponse> responses = service.findByCourse("1\u00b0 B\u00e1sico A");
 
         assertThat(responses).hasSize(1);
-        assertThat(responses.get(0).course()).isEqualTo("1A");
+        assertThat(responses.get(0).course()).isEqualTo("1\u00b0 B\u00e1sico A");
     }
 
     @Test
     void findByStudentUsernameReturnsAssociatedStudent() {
-        when(repository.findByStudentUsernameIgnoreCase("estudiante.demo"))
-                .thenReturn(Optional.of(student(1L, "Ana", "Rojas", "1A", "ana@aulaboh.cl")));
+        when(repository.findByStudentUsernameIgnoreCaseAndStatusIgnoreCase("estudiante.demo", "ACTIVE"))
+                .thenReturn(Optional.of(student(1L, "Ana", "Rojas", "1\u00b0 B\u00e1sico A", "ana@aulaboh.cl")));
 
         StudentResponse response = service.findByStudentUsername("estudiante.demo");
 
@@ -98,8 +100,8 @@ class StudentServiceTest {
 
     @Test
     void findByGuardianUsernameReturnsRepresentedStudents() {
-        when(repository.findByGuardianUsernameIgnoreCase("apoderado.demo"))
-                .thenReturn(List.of(student(1L, "Ana", "Rojas", "1A", "ana@aulaboh.cl")));
+        when(repository.findByGuardianUsernameIgnoreCaseAndStatusIgnoreCase("apoderado.demo", "ACTIVE"))
+                .thenReturn(List.of(student(1L, "Ana", "Rojas", "1\u00b0 B\u00e1sico A", "ana@aulaboh.cl")));
 
         List<StudentResponse> responses = service.findByGuardianUsername("apoderado.demo");
 
@@ -108,11 +110,46 @@ class StudentServiceTest {
     }
 
     @Test
+    void deleteMarksStudentAsInactive() {
+        Student existing = student(7L, "Ana", "Rojas", "1\u00b0 B\u00e1sico A", "ana@aulaboh.cl");
+        when(repository.findById(7L)).thenReturn(Optional.of(existing));
+
+        service.delete(7L);
+
+        assertThat(existing.getStatus()).isEqualTo("INACTIVE");
+        verify(repository).save(existing);
+    }
+
+    @Test
     void deleteThrowsWhenStudentDoesNotExist() {
-        when(repository.existsById(7L)).thenReturn(false);
+        when(repository.findById(7L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.delete(7L))
                 .isInstanceOf(StudentNotFoundException.class);
+    }
+
+    @Test
+    void createRejectsDuplicateStudentUsername() {
+        StudentRequest request = request("Ana", "Rojas", "1\u00b0 B\u00e1sico A", "ana@aulaboh.cl");
+        request.setStudentUsername("estudiante.demo");
+        when(repository.existsByStudentUsernameIgnoreCase("estudiante.demo")).thenReturn(true);
+
+        assertThatThrownBy(() -> service.create(request))
+                .isInstanceOf(DuplicateStudentUsernameException.class)
+                .hasMessageContaining("estudiante.demo");
+    }
+
+    @Test
+    void updateRejectsStudentUsernameUsedByAnotherStudent() {
+        Student existing = student(1L, "Ana", "Rojas", "1\u00b0 B\u00e1sico A", "ana@aulaboh.cl");
+        StudentRequest request = request("Ana", "Rojas", "1\u00b0 B\u00e1sico A", "ana@aulaboh.cl");
+        request.setStudentUsername("otro.estudiante");
+        when(repository.findById(1L)).thenReturn(Optional.of(existing));
+        when(repository.existsByStudentUsernameIgnoreCaseAndIdNot("otro.estudiante", 1L)).thenReturn(true);
+
+        assertThatThrownBy(() -> service.update(1L, request))
+                .isInstanceOf(DuplicateStudentUsernameException.class)
+                .hasMessageContaining("otro.estudiante");
     }
 
     private StudentRequest request(String firstName, String lastName, String course, String email) {

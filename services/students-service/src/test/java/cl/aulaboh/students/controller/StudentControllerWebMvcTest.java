@@ -31,7 +31,7 @@ class StudentControllerWebMvcTest {
     @Test
     void createReturnsCreatedStudent() throws Exception {
         when(service.create(org.mockito.ArgumentMatchers.any()))
-                .thenReturn(student(1L, "1A"));
+                .thenReturn(student(1L, "1\u00b0 B\u00e1sico A"));
 
         mockMvc.perform(post("/api/students")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -39,13 +39,13 @@ class StudentControllerWebMvcTest {
                                 {
                                   "firstName": "Ana",
                                   "lastName": "Perez",
-                                  "course": "1A",
+                                  "course": "1\u00b0 B\u00e1sico A",
                                   "email": "ana@example.com"
                                 }
                                 """))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(1L))
-                .andExpect(jsonPath("$.course").value("1A"));
+                .andExpect(jsonPath("$.course").value("1\u00b0 B\u00e1sico A"));
     }
 
     @Test
@@ -64,20 +64,35 @@ class StudentControllerWebMvcTest {
     }
 
     @Test
+    void createRejectsCourseOutsideCatalog() throws Exception {
+        mockMvc.perform(post("/api/students")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "firstName": "Ana",
+                                  "lastName": "Perez",
+                                  "course": "9\u00b0 B\u00e1sico A"
+                                }
+                                """))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("ValidationException"));
+    }
+
+    @Test
     void findAllUsesCourseFilterWhenProvided() throws Exception {
-        when(service.findByCourse("1A")).thenReturn(List.of(student(1L, "1A")));
+        when(service.findByCourse("1\u00b0 B\u00e1sico A")).thenReturn(List.of(student(1L, "1\u00b0 B\u00e1sico A")));
 
-        mockMvc.perform(get("/api/students").param("course", "1A"))
+        mockMvc.perform(get("/api/students").param("course", "1\u00b0 B\u00e1sico A"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].course").value("1A"));
+                .andExpect(jsonPath("$[0].course").value("1\u00b0 B\u00e1sico A"));
 
-        verify(service).findByCourse("1A");
+        verify(service).findByCourse("1\u00b0 B\u00e1sico A");
     }
 
     @Test
     void exposesUsernameAndGuardianLookups() throws Exception {
-        when(service.findByStudentUsername("ana.perez")).thenReturn(student(1L, "1A"));
-        when(service.findByGuardianUsername("maria.perez")).thenReturn(List.of(student(1L, "1A")));
+        when(service.findByStudentUsername("ana.perez")).thenReturn(student(1L, "1\u00b0 B\u00e1sico A"));
+        when(service.findByGuardianUsername("maria.perez")).thenReturn(List.of(student(1L, "1\u00b0 B\u00e1sico A")));
 
         mockMvc.perform(get("/api/students/username/ana.perez"))
                 .andExpect(status().isOk())
@@ -91,7 +106,7 @@ class StudentControllerWebMvcTest {
     @Test
     void updateAndDeleteDelegateToService() throws Exception {
         when(service.update(org.mockito.ArgumentMatchers.eq(1L), org.mockito.ArgumentMatchers.any()))
-                .thenReturn(student(1L, "2B"));
+                .thenReturn(student(1L, "2\u00b0 Medio B"));
 
         mockMvc.perform(put("/api/students/1")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -99,12 +114,12 @@ class StudentControllerWebMvcTest {
                                 {
                                   "firstName": "Ana",
                                   "lastName": "Perez",
-                                  "course": "2B",
+                                  "course": "2\u00b0 Medio B",
                                   "email": "ana@example.com"
                                 }
                                 """))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.course").value("2B"));
+                .andExpect(jsonPath("$.course").value("2\u00b0 Medio B"));
 
         mockMvc.perform(delete("/api/students/1"))
                 .andExpect(status().isNoContent());

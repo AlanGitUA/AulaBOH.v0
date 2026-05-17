@@ -61,6 +61,41 @@ button:hover,
   box-shadow: 0 10px 24px rgba(60, 31, 10, 0.18);
 }
 
+.form-actions,
+.table-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.form-actions button {
+  flex: 1 1 140px;
+}
+
+.table-link-button {
+  width: auto;
+  border: 0;
+  background: transparent;
+  color: var(--color-adobe);
+  padding: 0;
+  font: inherit;
+}
+
+.table-link-button:hover {
+  background: transparent;
+  color: var(--color-dark-wood);
+  box-shadow: none;
+}
+
+.table-link-button.danger {
+  color: #b42318;
+}
+
+.table-link-button.danger:hover {
+  color: #7a271a;
+}
+
 input,
 select {
   width: 100%;

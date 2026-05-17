@@ -36,4 +36,15 @@ public class StudentProxyController {
     public StudentResponse findById(@PathVariable Long id) {
         return studentClient.findById(id);
     }
+
+    @PutMapping("/{id}")
+    public StudentResponse update(@PathVariable Long id, @Valid @RequestBody StudentRequest request) {
+        return studentClient.update(id, request);
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long id) {
+        studentClient.delete(id);
+    }
 }

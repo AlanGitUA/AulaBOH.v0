@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { bffApi } from '../services/bffApi';
+import { COURSE_OPTIONS } from '../utils/courseCatalog';
 
 const today = new Date().toISOString().slice(0, 10);
 
@@ -167,7 +168,7 @@ export default function AcademicForms({ students, classes, evaluations, onChange
         {activeModule === 'class' && (
           <form className="form" onSubmit={createClass}>
             <input name="subject" placeholder="Asignatura" value={classForm.subject} onChange={updateClass} required />
-            <input name="course" placeholder="Curso" value={classForm.course} onChange={updateClass} required />
+            <input name="course" list="course-options" placeholder="Curso" value={classForm.course} onChange={updateClass} required />
             <input name="classDate" type="date" value={classForm.classDate} onChange={updateClass} required />
             <button type="submit">Guardar clase</button>
           </form>
@@ -222,7 +223,7 @@ export default function AcademicForms({ students, classes, evaluations, onChange
             </select>
             <input name="title" placeholder="Título de la evaluación" value={evaluationForm.title} onChange={updateEvaluation} required />
             <input name="subject" placeholder="Asignatura" value={evaluationForm.subject} onChange={updateEvaluation} required />
-            <input name="course" placeholder="Curso" value={evaluationForm.course} onChange={updateEvaluation} required />
+            <input name="course" list="course-options" placeholder="Curso" value={evaluationForm.course} onChange={updateEvaluation} required />
             <input name="evaluationDate" type="date" value={evaluationForm.evaluationDate} onChange={updateEvaluation} />
             <button type="submit">{selectedEvaluationId ? 'Actualizar evaluación' : 'Guardar evaluación'}</button>
           </form>
@@ -260,6 +261,11 @@ export default function AcademicForms({ students, classes, evaluations, onChange
         )}
 
         {message && <strong className="status-message">{message}</strong>}
+        <datalist id="course-options">
+          {COURSE_OPTIONS.map((course) => (
+            <option key={course} value={course} />
+          ))}
+        </datalist>
       </section>
     </section>
   );

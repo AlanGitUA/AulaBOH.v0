@@ -39,12 +39,24 @@ class GradeServiceTest {
     @Test
     void createEvaluationPersistsEvaluationData() {
         Evaluation saved = evaluation(1L, "1A", "Matematica", "Prueba 1");
+        when(evaluationRepository.existsByCourseIgnoreCaseAndSubjectIgnoreCaseAndTitleIgnoreCaseAndEvaluationDate(
+                "1A", "Matematica", "Prueba 1", LocalDate.of(2026, 5, 13))).thenReturn(false);
         when(evaluationRepository.save(org.mockito.ArgumentMatchers.any(Evaluation.class))).thenReturn(saved);
 
         var response = service.createEvaluation(evaluationRequest("1A", "Matematica", "Prueba 1"));
 
         assertThat(response.id()).isEqualTo(1L);
         assertThat(response.title()).isEqualTo("Prueba 1");
+    }
+
+    @Test
+    void createEvaluationRejectsDuplicateIdentity() {
+        when(evaluationRepository.existsByCourseIgnoreCaseAndSubjectIgnoreCaseAndTitleIgnoreCaseAndEvaluationDate(
+                "1A", "Matematica", "Prueba 1", LocalDate.of(2026, 5, 13))).thenReturn(true);
+
+        assertThatThrownBy(() -> service.createEvaluation(evaluationRequest("1A", "Matematica", "Prueba 1")))
+                .isInstanceOf(cl.aulaboh.grades.exception.DuplicateEvaluationException.class)
+                .hasMessageContaining("mismo curso");
     }
 
     @Test
@@ -63,6 +75,8 @@ class GradeServiceTest {
         Evaluation existing = evaluation(1L, "1A", "Matematica", "Prueba 1");
         Evaluation updated = evaluation(1L, "2B", "Historia", "Ensayo 1");
         when(evaluationRepository.findById(1L)).thenReturn(Optional.of(existing));
+        when(evaluationRepository.existsByCourseIgnoreCaseAndSubjectIgnoreCaseAndTitleIgnoreCaseAndEvaluationDateAndIdNot(
+                "2B", "Historia", "Ensayo 1", LocalDate.of(2026, 5, 13), 1L)).thenReturn(false);
         when(evaluationRepository.save(existing)).thenReturn(updated);
 
         var response = service.updateEvaluation(1L, evaluationRequest("2B", "Historia", "Ensayo 1"));
@@ -70,6 +84,18 @@ class GradeServiceTest {
         assertThat(response.course()).isEqualTo("2B");
         assertThat(response.subject()).isEqualTo("Historia");
         assertThat(response.title()).isEqualTo("Ensayo 1");
+    }
+
+    @Test
+    void updateEvaluationRejectsDuplicateIdentityUsedByAnotherEvaluation() {
+        Evaluation existing = evaluation(1L, "1A", "Matematica", "Prueba 1");
+        when(evaluationRepository.findById(1L)).thenReturn(Optional.of(existing));
+        when(evaluationRepository.existsByCourseIgnoreCaseAndSubjectIgnoreCaseAndTitleIgnoreCaseAndEvaluationDateAndIdNot(
+                "2B", "Historia", "Ensayo 1", LocalDate.of(2026, 5, 13), 1L)).thenReturn(true);
+
+        assertThatThrownBy(() -> service.updateEvaluation(1L, evaluationRequest("2B", "Historia", "Ensayo 1")))
+                .isInstanceOf(cl.aulaboh.grades.exception.DuplicateEvaluationException.class)
+                .hasMessageContaining("mismo curso");
     }
 
     @Test

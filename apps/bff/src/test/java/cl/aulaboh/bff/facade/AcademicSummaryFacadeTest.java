@@ -65,6 +65,19 @@ class AcademicSummaryFacadeTest {
     }
 
     @Test
+    void updateAndDeleteStudentDelegateToStudentClient() {
+        StudentRequest request = studentRequest("Ana", "Rojas", "1A");
+        StudentResponse expected = student(1L, "Ana", "Rojas", "1A");
+        when(studentClient.update(1L, request)).thenReturn(expected);
+
+        assertThat(facade.updateStudent(1L, request)).isEqualTo(expected);
+        facade.deleteStudent(1L);
+
+        verify(studentClient).update(1L, request);
+        verify(studentClient).delete(1L);
+    }
+
+    @Test
     void getStudentSummaryCombinesStudentAttendanceAndGrades() {
         StudentResponse student = student(1L, "Ana", "Rojas", "1A");
         AttendanceSummaryResponse attendance = new AttendanceSummaryResponse(1L, 8L, 1L, 1L);

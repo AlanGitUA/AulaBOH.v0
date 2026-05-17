@@ -15,8 +15,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -48,7 +50,7 @@ class StudentProxyControllerWebMvcTest {
                                 {
                                   "firstName":"Ana",
                                   "lastName":"Rojas",
-                                  "course":"1A",
+                                  "course":"1° Básico A",
                                   "email":"ana@aulaboh.cl"
                                 }
                                 """))
@@ -61,7 +63,29 @@ class StudentProxyControllerWebMvcTest {
 
         mockMvc.perform(get("/api/students/1").with(teacherJwt()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.course").value("1A"));
+                .andExpect(jsonPath("$.course").value("1° Básico A"));
+    }
+
+    @Test
+    void updatesAndDeletesStudents() throws Exception {
+        when(studentClient.update(org.mockito.ArgumentMatchers.eq(1L), any())).thenReturn(student(1L));
+
+        mockMvc.perform(put("/api/students/1")
+                        .with(adminJwt())
+                        .contentType("application/json")
+                        .content("""
+                                {
+                                  "firstName":"Ana",
+                                  "lastName":"Rojas",
+                                  "course":"1° Básico A",
+                                  "email":"ana@aulaboh.cl"
+                                }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1));
+
+        mockMvc.perform(delete("/api/students/1").with(adminJwt()))
+                .andExpect(status().isNoContent());
     }
 
     @Test
@@ -74,7 +98,7 @@ class StudentProxyControllerWebMvcTest {
     }
 
     private StudentResponse student(Long id) {
-        return new StudentResponse(id, "Ana", "Rojas", "1A", "ana@aulaboh.cl",
+        return new StudentResponse(id, "Ana", "Rojas", "1° Básico A", "ana@aulaboh.cl",
                 "estudiante.demo", "apoderado.demo", "ACTIVE");
     }
 

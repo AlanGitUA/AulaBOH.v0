@@ -40,6 +40,13 @@ public class ApiExceptionHandler {
         return ResponseEntity.badRequest().body(errorBody("BusinessException", ex.getMessage()));
     }
 
+    @ExceptionHandler(DuplicateEvaluationException.class)
+    public ResponseEntity<Map<String,Object>> duplicateEvaluation(DuplicateEvaluationException ex) {
+        logger.warn("Evaluacion duplicada en grades-service | error={}", ex.getMessage());
+        recordError("DuplicateEvaluationException", 409);
+        return ResponseEntity.status(409).body(errorBody("DuplicateEvaluationException", ex.getMessage()));
+    }
+
     @ExceptionHandler(ExternalServiceUnavailableException.class)
     public ResponseEntity<Map<String,Object>> externalUnavailable(ExternalServiceUnavailableException ex) {
         logger.warn("Servicio externo no disponible desde grades-service | error={}", ex.getMessage());

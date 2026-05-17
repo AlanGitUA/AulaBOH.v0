@@ -46,16 +46,16 @@ class AcademicDataControllerWebMvcTest {
     @Test
     void createsAndListsClasses() throws Exception {
         when(attendanceClient.createClass(any()))
-                .thenReturn(new ClassResponse(1L, "1A", "Matematica", LocalDate.of(2026, 5, 17)));
+                .thenReturn(new ClassResponse(1L, "1° Básico A", "Matematica", LocalDate.of(2026, 5, 17)));
         when(attendanceClient.findClasses())
-                .thenReturn(new ClassResponse[]{new ClassResponse(1L, "1A", "Matematica", LocalDate.of(2026, 5, 17))});
+                .thenReturn(new ClassResponse[]{new ClassResponse(1L, "1° Básico A", "Matematica", LocalDate.of(2026, 5, 17))});
 
         mockMvc.perform(post("/api/bff/classes")
                         .with(teacherJwt())
                         .contentType("application/json")
                         .content("""
                                 {
-                                  "course":"1A",
+                                  "course":"1° Básico A",
                                   "subject":"Matematica",
                                   "classDate":"2026-05-17"
                                 }
@@ -65,20 +65,20 @@ class AcademicDataControllerWebMvcTest {
 
         mockMvc.perform(get("/api/bff/classes").with(teacherJwt()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].course").value("1A"));
+                .andExpect(jsonPath("$[0].course").value("1° Básico A"));
     }
 
     @Test
     void registersAndListsAttendances() throws Exception {
         when(attendanceClient.registerAttendance(any()))
                 .thenReturn(new AttendanceResponse(
-                        1L, 2L, "1A", "Matematica", LocalDate.of(2026, 5, 17),
+                        1L, 2L, "1° Básico A", "Matematica", LocalDate.of(2026, 5, 17),
                         5L, "PRESENT", null
                 ));
         when(attendanceClient.attendancesByStudent(5L))
                 .thenReturn(new AttendanceResponse[]{
                         new AttendanceResponse(
-                                1L, 2L, "1A", "Matematica", LocalDate.of(2026, 5, 17),
+                                1L, 2L, "1° Básico A", "Matematica", LocalDate.of(2026, 5, 17),
                                 5L, "PRESENT", null
                         )
                 });
@@ -104,12 +104,12 @@ class AcademicDataControllerWebMvcTest {
     @Test
     void createsUpdatesAndListsEvaluations() throws Exception {
         when(gradesClient.createEvaluation(any()))
-                .thenReturn(new EvaluationResponse(1L, "1A", "Lenguaje", "Control 1", LocalDate.of(2026, 5, 17)));
+                .thenReturn(new EvaluationResponse(1L, "1° Básico A", "Lenguaje", "Control 1", LocalDate.of(2026, 5, 17)));
         when(gradesClient.updateEvaluation(eq(1L), any()))
-                .thenReturn(new EvaluationResponse(1L, "1A", "Lenguaje", "Control actualizado", LocalDate.of(2026, 5, 18)));
+                .thenReturn(new EvaluationResponse(1L, "1° Básico A", "Lenguaje", "Control actualizado", LocalDate.of(2026, 5, 18)));
         when(gradesClient.findEvaluations())
                 .thenReturn(new EvaluationResponse[]{
-                        new EvaluationResponse(1L, "1A", "Lenguaje", "Control actualizado", LocalDate.of(2026, 5, 18))
+                        new EvaluationResponse(1L, "1° Básico A", "Lenguaje", "Control actualizado", LocalDate.of(2026, 5, 18))
                 });
 
         mockMvc.perform(post("/api/bff/evaluations")
@@ -117,7 +117,7 @@ class AcademicDataControllerWebMvcTest {
                         .contentType("application/json")
                         .content("""
                                 {
-                                  "course":"1A",
+                                  "course":"1° Básico A",
                                   "subject":"Lenguaje",
                                   "title":"Control 1",
                                   "evaluationDate":"2026-05-17"
@@ -131,7 +131,7 @@ class AcademicDataControllerWebMvcTest {
                         .contentType("application/json")
                         .content("""
                                 {
-                                  "course":"1A",
+                                  "course":"1° Básico A",
                                   "subject":"Lenguaje",
                                   "title":"Control actualizado",
                                   "evaluationDate":"2026-05-18"

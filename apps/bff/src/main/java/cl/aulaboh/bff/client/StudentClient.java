@@ -7,6 +7,8 @@ import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -25,6 +27,21 @@ public class StudentClient {
     @CircuitBreaker(name = "studentsService", fallbackMethod = "createFallback")
     public StudentResponse create(StudentRequest request) {
         return restTemplate.postForObject(baseUrl + "/api/students", request, StudentResponse.class);
+    }
+
+    @CircuitBreaker(name = "studentsService", fallbackMethod = "updateFallback")
+    public StudentResponse update(Long id, StudentRequest request) {
+        return restTemplate.exchange(
+                baseUrl + "/api/students/" + id,
+                HttpMethod.PUT,
+                new HttpEntity<>(request),
+                StudentResponse.class
+        ).getBody();
+    }
+
+    @CircuitBreaker(name = "studentsService", fallbackMethod = "deleteFallback")
+    public void delete(Long id) {
+        restTemplate.delete(baseUrl + "/api/students/" + id);
     }
 
     @CircuitBreaker(name = "studentsService", fallbackMethod = "findByIdFallback")
@@ -49,6 +66,16 @@ public class StudentClient {
 
     private StudentResponse createFallback(StudentRequest request, Throwable ex) {
         logger.warn("Circuit Breaker activado en BFF -> students-service | metodo=create | error={}", ex.getMessage(), ex);
+        throw new DownstreamServiceUnavailableException("students-service");
+    }
+
+    private StudentResponse updateFallback(Long id, StudentRequest request, Throwable ex) {
+        logger.warn("Circuit Breaker activado en BFF -> students-service | metodo=update | id={} | error={}", id, ex.getMessage(), ex);
+        throw new DownstreamServiceUnavailableException("students-service");
+    }
+
+    private void deleteFallback(Long id, Throwable ex) {
+        logger.warn("Circuit Breaker activado en BFF -> students-service | metodo=delete | id={} | error={}", id, ex.getMessage(), ex);
         throw new DownstreamServiceUnavailableException("students-service");
     }
 

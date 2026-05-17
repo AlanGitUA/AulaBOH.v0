@@ -31,17 +31,17 @@ class GradeControllerWebMvcTest {
 
     @Test
     void createListAndUpdateEvaluations() throws Exception {
-        EvaluationResponse evaluation = new EvaluationResponse(1L, "1A", "Matematica", "Prueba 1", LocalDate.of(2026, 5, 17));
+        EvaluationResponse evaluation = new EvaluationResponse(1L, "1° Básico A", "Matematica", "Prueba 1", LocalDate.of(2026, 5, 17));
         when(service.createEvaluation(org.mockito.ArgumentMatchers.any())).thenReturn(evaluation);
-        when(service.findEvaluations("1A")).thenReturn(List.of(evaluation));
+        when(service.findEvaluations("1° Básico A")).thenReturn(List.of(evaluation));
         when(service.updateEvaluation(org.mockito.ArgumentMatchers.eq(1L), org.mockito.ArgumentMatchers.any()))
-                .thenReturn(new EvaluationResponse(1L, "1A", "Matematica", "Prueba 2", LocalDate.of(2026, 5, 18)));
+                .thenReturn(new EvaluationResponse(1L, "1° Básico A", "Matematica", "Prueba 2", LocalDate.of(2026, 5, 18)));
 
         mockMvc.perform(post("/api/evaluations")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
-                                  "course": "1A",
+                                  "course": "1° Básico A",
                                   "subject": "Matematica",
                                   "title": "Prueba 1",
                                   "evaluationDate": "2026-05-17"
@@ -50,15 +50,15 @@ class GradeControllerWebMvcTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.title").value("Prueba 1"));
 
-        mockMvc.perform(get("/api/evaluations").param("course", "1A"))
+        mockMvc.perform(get("/api/evaluations").param("course", "1° Básico A"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].course").value("1A"));
+                .andExpect(jsonPath("$[0].course").value("1° Básico A"));
 
         mockMvc.perform(put("/api/evaluations/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
-                                  "course": "1A",
+                                  "course": "1° Básico A",
                                   "subject": "Matematica",
                                   "title": "Prueba 2",
                                   "evaluationDate": "2026-05-18"
@@ -77,6 +77,22 @@ class GradeControllerWebMvcTest {
                                   "course": "",
                                   "subject": "",
                                   "title": ""
+                                }
+                                """))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("ValidationException"));
+    }
+
+    @Test
+    void createEvaluationRejectsCourseOutsideCatalog() throws Exception {
+        mockMvc.perform(post("/api/evaluations")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "course": "1A",
+                                  "subject": "Matematica",
+                                  "title": "Prueba 1",
+                                  "evaluationDate": "2026-05-17"
                                 }
                                 """))
                 .andExpect(status().isBadRequest())
