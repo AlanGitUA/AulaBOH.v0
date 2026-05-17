@@ -70,6 +70,26 @@ Se habilitaron endpoints:
 /actuator/circuitbreakers
 ```
 
+Ademas de las metricas base de Spring Boot, la plataforma expone metricas personalizadas:
+
+| Metrica | Tipo | Uso |
+|---|---|---|
+| `aulaboh.method.execution` | Timer | Tiempo de ejecucion de metodos criticos. |
+| `aulaboh.api.errors` | Counter | Errores HTTP manejados por cada servicio. |
+
+Etiquetas disponibles para `aulaboh.method.execution`:
+
+- `service`
+- `class`
+- `method`
+- `outcome`
+
+Etiquetas disponibles para `aulaboh.api.errors`:
+
+- `service`
+- `type`
+- `status`
+
 ## Como probar
 
 1. Levantar Eureka.
@@ -80,6 +100,45 @@ Se habilitaron endpoints:
 6. Consultar desde el BFF un endpoint que dependa de estudiantes.
 7. Verificar logs de fallback y respuesta controlada.
 
+## Consultar metricas
+
+### Tiempo de ejecucion por metodo
+
+Ejemplo general:
+
+```text
+http://localhost:8081/actuator/metrics/aulaboh.method.execution
+```
+
+Ejemplo filtrado por metodo:
+
+```text
+http://localhost:8081/actuator/metrics/aulaboh.method.execution?tag=service:students-service&tag=class:StudentService&tag=method:findAll&tag=outcome:success
+```
+
+### Errores manejados por la API
+
+Ejemplo general:
+
+```text
+http://localhost:8081/actuator/metrics/aulaboh.api.errors
+```
+
+Ejemplo filtrado por validaciones fallidas:
+
+```text
+http://localhost:8081/actuator/metrics/aulaboh.api.errors?tag=service:students-service&tag=type:ValidationException&tag=status:400
+```
+
+## Prueba manual recomendada
+
+1. Levantar `students-service`.
+2. Ejecutar una consulta valida a `GET /api/students`.
+3. Consultar `aulaboh.method.execution` y verificar que aparezca una serie con `outcome=success`.
+4. Enviar un `POST /api/students` invalido, por ejemplo sin `firstName`.
+5. Consultar `aulaboh.api.errors` y verificar que aparezca una serie con `type=ValidationException` y `status=400`.
+6. Revisar el archivo de operaciones del servicio para confirmar que el evento tambien quedo registrado en logs.
+
 ## Comportamiento esperado
 
-Se implemento observabilidad transversal con AOP para medir tiempos de respuesta en metodos criticos. Tambien se aplico Circuit Breaker para evitar que fallas repetidas afecten todo el sistema. Cuando un microservicio no responde o el circuito se abre, el sistema registra el evento y entrega una respuesta controlada mediante el handler global de excepciones.
+Se implemento observabilidad transversal con AOP para medir tiempos de respuesta en metodos criticos. Tambien se aplico Circuit Breaker para evitar que fallas repetidas afecten todo el sistema. Cuando un microservicio no responde o el circuito se abre, el sistema registra el evento, incrementa metricas consultables y entrega una respuesta controlada mediante el handler global de excepciones.
