@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -45,4 +46,22 @@ public class AcademicSummaryController {
             responses = @ApiResponse(responseCode = "200", description = "Resumen obtenido")
     )
     public AcademicSummaryResponse studentSummary(@PathVariable Long studentId) { return facade.getStudentSummary(studentId); }
+
+    @GetMapping("/me/summary")
+    public AcademicSummaryResponse ownStudentSummary(@org.springframework.security.core.annotation.AuthenticationPrincipal Jwt jwt) {
+        return facade.getOwnStudentSummary(jwt.getClaimAsString("preferred_username"));
+    }
+
+    @GetMapping("/me/students")
+    public List<StudentResponse> guardianStudents(@org.springframework.security.core.annotation.AuthenticationPrincipal Jwt jwt) {
+        return facade.findGuardianStudents(jwt.getClaimAsString("preferred_username"));
+    }
+
+    @GetMapping("/me/students/{studentId}/summary")
+    public AcademicSummaryResponse guardianStudentSummary(
+            @org.springframework.security.core.annotation.AuthenticationPrincipal Jwt jwt,
+            @PathVariable Long studentId
+    ) {
+        return facade.getGuardianStudentSummary(jwt.getClaimAsString("preferred_username"), studentId);
+    }
 }

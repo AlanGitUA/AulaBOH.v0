@@ -87,6 +87,27 @@ class StudentServiceTest {
     }
 
     @Test
+    void findByStudentUsernameReturnsAssociatedStudent() {
+        when(repository.findByStudentUsernameIgnoreCase("estudiante.demo"))
+                .thenReturn(Optional.of(student(1L, "Ana", "Rojas", "1A", "ana@aulaboh.cl")));
+
+        StudentResponse response = service.findByStudentUsername("estudiante.demo");
+
+        assertThat(response.studentUsername()).isEqualTo("estudiante.demo");
+    }
+
+    @Test
+    void findByGuardianUsernameReturnsRepresentedStudents() {
+        when(repository.findByGuardianUsernameIgnoreCase("apoderado.demo"))
+                .thenReturn(List.of(student(1L, "Ana", "Rojas", "1A", "ana@aulaboh.cl")));
+
+        List<StudentResponse> responses = service.findByGuardianUsername("apoderado.demo");
+
+        assertThat(responses).hasSize(1);
+        assertThat(responses.get(0).guardianUsername()).isEqualTo("apoderado.demo");
+    }
+
+    @Test
     void deleteThrowsWhenStudentDoesNotExist() {
         when(repository.existsById(7L)).thenReturn(false);
 
@@ -112,6 +133,8 @@ class StudentServiceTest {
         student.setCourse(course);
         student.setEmail(email);
         student.setBirthDate(LocalDate.of(2010, 5, 13));
+        student.setStudentUsername("estudiante.demo");
+        student.setGuardianUsername("apoderado.demo");
         student.setStatus("ACTIVE");
         return student;
     }

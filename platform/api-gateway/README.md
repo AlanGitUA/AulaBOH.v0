@@ -1,9 +1,15 @@
 # API Gateway
 
-Entrada central para BFF y microservicios.
+Entrada central expuesta para el BFF.
 
 ```bash
 mvn spring-boot:run
 ```
 
 Puerto: `8090`
+
+Ruta pública:
+
+```text
+http://localhost:8090/api/bff/**
+```

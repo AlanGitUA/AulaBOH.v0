@@ -28,7 +28,7 @@ Contiene logs generales del microservicio:
 
 ### `operaciones.log`
 
-Contiene solo logs limpios de operaciones HTTP, pensados para mostrar en la presentación:
+Contiene logs de operaciones HTTP:
 
 - servicio que recibió la operación
 - método HTTP
@@ -56,31 +56,31 @@ Resultado        : OK
 ### BFF
 
 ```powershell
-cd C:\proyectos\AulaBOH.v0\apps\bff
+cd apps/bff
 Get-Content .\logs\operaciones.log -Wait -Tail 50
 ```
 
 ### Students service
 
 ```powershell
-cd C:\proyectos\AulaBOH.v0\services\students-service
+cd services/students-service
 Get-Content .\logs\operaciones.log -Wait -Tail 50
 ```
 
 ### Attendance service
 
 ```powershell
-cd C:\proyectos\AulaBOH.v0\services\attendance-service
+cd services/attendance-service
 Get-Content .\logs\operaciones.log -Wait -Tail 50
 ```
 
 ### Grades service
 
 ```powershell
-cd C:\proyectos\AulaBOH.v0\services\grades-service
+cd services/grades-service
 Get-Content .\logs\operaciones.log -Wait -Tail 50
 ```
 
-## Explicación para el profesor
+## Uso operativo
 
 Además de mostrar los logs en consola, se configuró Logback para guardar los registros localmente en archivos. Se separaron los logs generales del sistema en `application.log` y los logs de operaciones HTTP en `operaciones.log`. Esto permite revisar de forma ordenada el comportamiento de cada microservicio, incluyendo endpoint utilizado, estado de respuesta y tiempo de respuesta.

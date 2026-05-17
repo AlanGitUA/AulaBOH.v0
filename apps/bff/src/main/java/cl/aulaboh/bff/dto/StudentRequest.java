@@ -14,6 +14,8 @@ public class StudentRequest {
     @Email(message = "El correo debe tener formato valido")
     private String email;
     private LocalDate birthDate;
+    private String studentUsername;
+    private String guardianUsername;
 
     public String getFirstName() { return firstName; }
     public void setFirstName(String firstName) { this.firstName = firstName; }
@@ -25,4 +27,8 @@ public class StudentRequest {
     public void setEmail(String email) { this.email = email; }
     public LocalDate getBirthDate() { return birthDate; }
     public void setBirthDate(LocalDate birthDate) { this.birthDate = birthDate; }
+    public String getStudentUsername() { return studentUsername; }
+    public void setStudentUsername(String studentUsername) { this.studentUsername = studentUsername; }
+    public String getGuardianUsername() { return guardianUsername; }
+    public void setGuardianUsername(String guardianUsername) { this.guardianUsername = guardianUsername; }
 }

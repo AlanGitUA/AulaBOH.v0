@@ -73,12 +73,9 @@ Rutas principales:
 
 ```text
 http://localhost:8090/api/bff/**
-http://localhost:8090/api/students/**
-http://localhost:8090/api/classes/**
-http://localhost:8090/api/attendances/**
-http://localhost:8090/api/evaluations/**
-http://localhost:8090/api/grades/**
 ```
+
+Los microservicios de dominio no se exponen directamente a travÃ©s del Gateway; el acceso externo se centraliza en el BFF.
 
 ## Keycloak
 

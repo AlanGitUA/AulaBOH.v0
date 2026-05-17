@@ -16,6 +16,8 @@ public final class StudentFactory {
         student.setCourse(request.getCourse());
         student.setEmail(request.getEmail());
         student.setBirthDate(request.getBirthDate());
+        student.setStudentUsername(request.getStudentUsername());
+        student.setGuardianUsername(request.getGuardianUsername());
         student.setStatus("ACTIVE");
         return student;
     }

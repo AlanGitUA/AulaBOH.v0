@@ -22,7 +22,7 @@
         </encoder>
     </appender>
 
-    <!-- Archivo limpio para mostrar en la demo: solo operaciones HTTP -->
+    <!-- Archivo dedicado a operaciones HTTP -->
     <appender name="OPERACIONES_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_PATH}/operaciones.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">

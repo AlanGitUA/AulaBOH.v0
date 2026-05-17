@@ -40,6 +40,18 @@ public class StudentService {
     }
 
     @CircuitBreaker(name = "studentsServiceMethods")
+    public StudentResponse findByStudentUsername(String username) {
+        return repository.findByStudentUsernameIgnoreCase(username)
+                .map(this::toResponse)
+                .orElseThrow(() -> new StudentNotFoundException(username));
+    }
+
+    @CircuitBreaker(name = "studentsServiceMethods")
+    public List<StudentResponse> findByGuardianUsername(String username) {
+        return repository.findByGuardianUsernameIgnoreCase(username).stream().map(this::toResponse).toList();
+    }
+
+    @CircuitBreaker(name = "studentsServiceMethods")
     public StudentResponse update(Long id, StudentRequest request) {
         Student student = repository.findById(id).orElseThrow(() -> new StudentNotFoundException(id));
         student.setFirstName(request.getFirstName());
@@ -47,6 +59,8 @@ public class StudentService {
         student.setCourse(request.getCourse());
         student.setEmail(request.getEmail());
         student.setBirthDate(request.getBirthDate());
+        student.setStudentUsername(request.getStudentUsername());
+        student.setGuardianUsername(request.getGuardianUsername());
         return toResponse(repository.save(student));
     }
 
@@ -57,6 +71,15 @@ public class StudentService {
     }
 
     private StudentResponse toResponse(Student student) {
-        return new StudentResponse(student.getId(), student.getFirstName(), student.getLastName(), student.getCourse(), student.getEmail(), student.getStatus());
+        return new StudentResponse(
+                student.getId(),
+                student.getFirstName(),
+                student.getLastName(),
+                student.getCourse(),
+                student.getEmail(),
+                student.getStudentUsername(),
+                student.getGuardianUsername(),
+                student.getStatus()
+        );
     }
 }

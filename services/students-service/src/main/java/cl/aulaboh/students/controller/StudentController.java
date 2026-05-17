@@ -55,6 +55,16 @@ public class StudentController {
     )
     public StudentResponse findById(@PathVariable Long id) { return service.findById(id); }
 
+    @GetMapping("/username/{username}")
+    public StudentResponse findByStudentUsername(@PathVariable String username) {
+        return service.findByStudentUsername(username);
+    }
+
+    @GetMapping("/guardian/{username}")
+    public List<StudentResponse> findByGuardianUsername(@PathVariable String username) {
+        return service.findByGuardianUsername(username);
+    }
+
     @PutMapping("/{id}")
     @Operation(
             summary = "Actualizar estudiante",

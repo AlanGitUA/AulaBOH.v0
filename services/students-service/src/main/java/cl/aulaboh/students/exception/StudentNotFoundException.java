@@ -4,4 +4,8 @@ public class StudentNotFoundException extends RuntimeException {
     public StudentNotFoundException(Long id) {
         super("No existe un estudiante con id " + id);
     }
+
+    public StudentNotFoundException(String username) {
+        super("No existe un estudiante asociado al usuario " + username);
+    }
 }

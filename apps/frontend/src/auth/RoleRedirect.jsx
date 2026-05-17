@@ -27,11 +27,7 @@ export default function RoleRedirect() {
     return <Navigate to="/gestion-academica" replace />;
   }
 
-  if (hasRole('ESTUDIANTE')) {
-    return <Navigate to="/resumen-academico" replace />;
-  }
-
-  if (hasRole('APODERADO')) {
+  if (hasRole('ESTUDIANTE') || hasRole('APODERADO')) {
     return <Navigate to="/resumen-academico" replace />;
   }
 
