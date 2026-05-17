@@ -1,10 +1,10 @@
 # BFF - Backend For Frontend
 
-Capa de integración entre el frontend y los microservicios.
+Capa de integracion entre el frontend y los microservicios.
 
 ## Patrones demostrados
 
-- **Facade Pattern:** `AcademicSummaryFacade` reúne información de estudiantes, asistencia y calificaciones.
+- **Facade Pattern:** `AcademicSummaryFacade` reune informacion de estudiantes, asistencia y calificaciones.
 - **Client/Adapter:** clases `StudentClient`, `AttendanceClient` y `GradesClient` encapsulan llamadas HTTP.
 - **BFF:** expone endpoints orientados al frontend, evitando que React consuma cada microservicio por separado.
 
@@ -21,6 +21,9 @@ Puerto: `8080`
 - `GET /api/bff/students`
 - `POST /api/bff/students`
 - `GET /api/bff/students/{studentId}/summary`
+- `GET /api/bff/me/summary`
+- `GET /api/bff/guardian/students`
+- `GET /api/bff/guardian/students/{studentId}/summary`
 - `POST /api/bff/classes`
 - `GET /api/bff/classes`
 - `POST /api/bff/attendances`
