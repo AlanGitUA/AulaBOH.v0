@@ -1,12 +1,14 @@
-# Observabilidad, métricas, logs y Circuit Breaker - AulaBOH
+# Observabilidad, metricas, logs y Circuit Breaker - AulaBOH
 
 ## Objetivo
-Se incorporó observabilidad en los microservicios para registrar comportamiento, tiempos de respuesta, errores y activación de Circuit Breaker. Esto permite evaluar el rendimiento de cada microservicio y detectar fallas de comunicación o errores internos.
+
+La plataforma incorpora observabilidad en los microservicios para registrar comportamiento, tiempos de respuesta, errores y activacion de circuit breakers. Esto permite evaluar rendimiento y detectar fallas de comunicacion o errores internos.
 
 ## Componentes implementados
 
 ### 1. Logs de tiempos de respuesta
-Se agregó `ServiceLoggingAspect` usando AOP en:
+
+Se agrego `ServiceLoggingAspect` usando AOP en:
 
 - `students-service`
 - `attendance-service`
@@ -15,10 +17,10 @@ Se agregó `ServiceLoggingAspect` usando AOP en:
 
 Este aspecto registra:
 
-- Inicio del método.
-- Fin del método.
-- Tiempo de respuesta en milisegundos.
-- Error ocurrido y tiempo antes del error.
+- inicio del metodo;
+- fin del metodo;
+- tiempo de respuesta en milisegundos;
+- error ocurrido y tiempo antes del error.
 
 Ejemplo de log esperado:
 
@@ -27,15 +29,16 @@ INFO  Iniciando metodo: StudentService.findAll
 INFO  Metodo finalizado: StudentService.findAll | Tiempo de respuesta: 23 ms
 ```
 
-### 2. Circuit Breaker en métodos críticos
-Se agregó `@CircuitBreaker` en los métodos públicos de:
+### 2. Circuit Breaker en metodos criticos
+
+Se agrego `@CircuitBreaker` en los metodos publicos de:
 
 - `StudentService`
 - `AttendanceService`
 - `GradeService`
 - `AcademicSummaryFacade`
 
-Además, se mantienen los Circuit Breaker existentes en los clientes que comunican microservicios:
+Ademas, se mantienen circuit breakers en los clientes que comunican microservicios:
 
 - BFF hacia `students-service`
 - BFF hacia `attendance-service`
@@ -44,36 +47,39 @@ Además, se mantienen los Circuit Breaker existentes en los clientes que comunic
 - `grades-service` hacia `students-service`
 
 ### 3. Logs en fallback
-Los métodos fallback ahora registran cuándo se activa el Circuit Breaker, indicando:
 
-- Servicio afectado.
-- Método afectado.
-- Parámetros principales, cuando corresponde.
-- Error original.
+Los metodos fallback registran:
 
-### 4. Handler Exception global con logs
-Los `ApiExceptionHandler` ahora registran errores de negocio, validación, servicios no disponibles, Circuit Breaker abierto y errores inesperados.
+- servicio afectado;
+- metodo afectado;
+- parametros principales, cuando corresponde;
+- error original.
 
-### 5. Métricas con Actuator
+### 4. Handler global de excepciones
+
+Los `ApiExceptionHandler` registran errores de negocio, validacion, servicios no disponibles, circuit breaker abierto y errores inesperados.
+
+### 5. Metricas con Actuator
+
 Se habilitaron endpoints:
 
-```txt
+```text
 /actuator/health
 /actuator/info
 /actuator/metrics
 /actuator/circuitbreakers
 ```
 
-## Cómo probar
+## Como probar
 
 1. Levantar Eureka.
 2. Levantar los microservicios.
 3. Levantar BFF y API Gateway.
-4. Llamar endpoints normalmente y revisar consola/logs.
+4. Llamar endpoints normalmente y revisar consola o logs.
 5. Apagar un microservicio, por ejemplo `students-service`.
 6. Consultar desde el BFF un endpoint que dependa de estudiantes.
 7. Verificar logs de fallback y respuesta controlada.
 
 ## Comportamiento esperado
 
-Se implementó observabilidad transversal con AOP para medir tiempos de respuesta en los métodos críticos de los servicios. También se aplicó Circuit Breaker para evitar que fallas repetidas afecten todo el sistema. Cuando un microservicio no responde o el Circuit Breaker se abre, el sistema registra el evento y entrega una respuesta controlada mediante el handler global de excepciones.
+Se implemento observabilidad transversal con AOP para medir tiempos de respuesta en metodos criticos. Tambien se aplico Circuit Breaker para evitar que fallas repetidas afecten todo el sistema. Cuando un microservicio no responde o el circuito se abre, el sistema registra el evento y entrega una respuesta controlada mediante el handler global de excepciones.

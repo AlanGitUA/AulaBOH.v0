@@ -175,8 +175,11 @@ mvn verify
 
 - `docs/system-overview.md`
 - `docs/platform-security.md`
+- `docs/database-persistence.md`
+- `docs/student-guardian-model.md`
 - `docs/keycloak-frontend-roles.md`
 - `docs/security-validation.md`
-- `docs/student-guardian-model.md`
-- `docs/database-persistence.md`
+- `docs/resilience-circuit-breaker.md`
+- `docs/api-docs-swagger.md`
+- `docs/observabilidad-metricas-logs.md`
 - `docs/testing-quality.md`

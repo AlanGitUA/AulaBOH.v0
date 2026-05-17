@@ -2,30 +2,32 @@
 
 ## Estado actual
 
-El servicio de estudiantes mantiene dos campos de asociacion:
+`students-service` persiste dos campos de asociacion en la tabla `students`:
 
-- `studentUsername`: usuario de Keycloak asociado al estudiante.
-- `guardianUsername`: usuario de Keycloak asociado al apoderado responsable.
+- `student_username`: usuario de Keycloak asociado al estudiante.
+- `guardian_username`: usuario de Keycloak asociado al apoderado responsable.
+
+El contrato REST expone esos valores como:
+
+- `studentUsername`
+- `guardianUsername`
 
 Este modelo permite:
 
-- obtener el resumen propio de un estudiante autenticado;
+- obtener el resumen academico propio de un estudiante autenticado;
 - listar los estudiantes asociados a un apoderado;
+- permitir que un apoderado consulte el resumen academico de sus estudiantes asociados;
 - impedir que un apoderado consulte estudiantes fuera de su alcance.
 
-## Motivo de la decision
+## Criterio de diseno
 
-La aplicacion necesita resolver permisos antes de introducir persistencia definitiva. Usar los nombres de usuario de Keycloak permite mantener el flujo funcional con cambios pequenos y deja clara la relacion que la base de datos debera conservar.
+La asociacion se mantiene en `students-service` porque ese servicio es el propietario del agregado `Student` y resuelve la relacion entre identidad autenticada y estudiante del dominio.
 
-## Evolucion recomendada con base de datos
+La solucion actual cubre el caso de un estudiante con un apoderado responsable y varios estudiantes asociados al mismo apoderado, sin introducir una tabla intermedia innecesaria para el alcance vigente.
 
-Cuando se implemente persistencia relacional, conviene separar la relacion apoderado-estudiante si el dominio requiere:
+## Evolucion posible
 
-- mas de un apoderado por estudiante;
-- mas de un estudiante por apoderado;
-- metadatos de relacion, como parentesco, prioridad o vigencia.
-
-Modelo recomendado:
+Si el dominio requiere multiples apoderados por estudiante o metadatos de relacion, la evolucion natural es separar la asociacion en una tabla dedicada:
 
 ```text
 students
@@ -44,6 +46,12 @@ guardian_student_relations
 - active
 ```
 
-## Criterio para la siguiente iteracion
+## Criterio para cambiar el modelo
 
-Antes de pasar a una tabla de relacion dedicada, confirmar si el alcance funcional requiere multiples apoderados por estudiante. Si no se requiere todavia, el modelo actual puede mantenerse durante la primera integracion con base de datos y migrarse posteriormente sin cambiar el contrato del BFF.
+El modelo actual puede mantenerse mientras se cumplan estas condiciones:
+
+- un estudiante solo necesita un apoderado principal;
+- no se requiere registrar parentesco, prioridad o vigencia;
+- el BFF puede resolver autorizacion con `studentUsername` y `guardianUsername` sin ampliar el contrato publico.
+
+Si cualquiera de esas condiciones cambia, conviene migrar a una relacion dedicada y conservar el contrato externo mediante adaptacion interna.

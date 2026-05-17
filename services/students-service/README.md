@@ -1,11 +1,11 @@
 # Students Service
 
-Microservicio de gestión de estudiantes del Colegio Bernardo O'Higgins.
+Microservicio de gestion de estudiantes del Colegio Bernardo O'Higgins.
 
 ## Patrones demostrados
 
-- **Repository Pattern:** `repository/StudentRepository.java` separa acceso a datos de la lógica de negocio.
-- **Factory Method:** `factory/StudentFactory.java` centraliza la creación de estudiantes activos.
+- **Repository Pattern:** `repository/StudentRepository.java` separa acceso a datos de la logica de negocio.
+- **Factory Method:** `factory/StudentFactory.java` centraliza la creacion de estudiantes activos.
 - **Arquitectura en capas:** `controller`, `service`, `repository`, `model`, `dto`.
 
 ## Ejecutar
@@ -21,6 +21,8 @@ Puerto: `8081`
 - `POST /api/students`
 - `GET /api/students`
 - `GET /api/students/{id}`
+- `GET /api/students/username/{username}`
+- `GET /api/students/guardian/{username}`
 - `PUT /api/students/{id}`
 - `DELETE /api/students/{id}`
 
