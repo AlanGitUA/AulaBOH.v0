@@ -2,10 +2,16 @@ package cl.aulaboh.attendance.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import java.time.LocalDate;
 
 public class ClassRequest {
-    @NotBlank private String course;
+    @NotBlank
+    @Pattern(
+            regexp = "^(?:[1-8]\\u00b0 B\\u00e1sico|[1-4]\\u00b0 Medio) [ABC]$",
+            message = "El curso debe ser un nivel valido entre 1° Basico A y 4° Medio C"
+    )
+    private String course;
     @NotBlank private String subject;
     @NotNull private LocalDate classDate;
     public String getCourse() { return course; }
