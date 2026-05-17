@@ -31,6 +31,7 @@ export default function AcademicForms({ students, classes, evaluations, onChange
   const [classForm, setClassForm] = useState({ subject: '', course: '', classDate: today });
   const [attendanceForm, setAttendanceForm] = useState({ studentId: '', classId: '', status: 'PRESENT', observation: '' });
   const [evaluationForm, setEvaluationForm] = useState({ title: '', subject: '', course: '', evaluationDate: today });
+  const [selectedEvaluationId, setSelectedEvaluationId] = useState('');
   const [gradeForm, setGradeForm] = useState({ studentId: '', evaluationId: '', score: '' });
   const [message, setMessage] = useState('');
 
@@ -38,6 +39,27 @@ export default function AcademicForms({ students, classes, evaluations, onChange
   const updateAttendance = (event) => setAttendanceForm({ ...attendanceForm, [event.target.name]: event.target.value });
   const updateEvaluation = (event) => setEvaluationForm({ ...evaluationForm, [event.target.name]: event.target.value });
   const updateGrade = (event) => setGradeForm({ ...gradeForm, [event.target.name]: event.target.value });
+
+  const selectEvaluation = (event) => {
+    const evaluationId = event.target.value;
+    setSelectedEvaluationId(evaluationId);
+    setMessage('');
+
+    if (!evaluationId) {
+      setEvaluationForm({ title: '', subject: '', course: '', evaluationDate: today });
+      return;
+    }
+
+    const evaluation = evaluations.find((item) => String(item.id) === evaluationId);
+    if (!evaluation) return;
+
+    setEvaluationForm({
+      title: evaluation.title,
+      subject: evaluation.subject,
+      course: evaluation.course,
+      evaluationDate: evaluation.evaluationDate ?? today,
+    });
+  };
 
   const createClass = async (event) => {
     event.preventDefault();
@@ -79,9 +101,14 @@ export default function AcademicForms({ students, classes, evaluations, onChange
     setMessage('');
 
     try {
-      await bffApi.createEvaluation(evaluationForm);
+      if (selectedEvaluationId) {
+        await bffApi.updateEvaluation(selectedEvaluationId, evaluationForm);
+      } else {
+        await bffApi.createEvaluation(evaluationForm);
+      }
       setEvaluationForm({ title: '', subject: '', course: '', evaluationDate: today });
-      setMessage('Evaluación registrada correctamente.');
+      setSelectedEvaluationId('');
+      setMessage(selectedEvaluationId ? 'Evaluación actualizada correctamente.' : 'Evaluación registrada correctamente.');
       onChanged?.();
     } catch (error) {
       console.error(error);
@@ -185,11 +212,19 @@ export default function AcademicForms({ students, classes, evaluations, onChange
 
         {activeModule === 'evaluation' && (
           <form className="form" onSubmit={createEvaluation}>
+            <select name="evaluationId" value={selectedEvaluationId} onChange={selectEvaluation}>
+              <option value="">Nueva evaluación</option>
+              {evaluations.map((evaluation) => (
+                <option key={evaluation.id} value={evaluation.id}>
+                  {evaluation.title} - {evaluation.subject} - {evaluation.course}
+                </option>
+              ))}
+            </select>
             <input name="title" placeholder="Título de la evaluación" value={evaluationForm.title} onChange={updateEvaluation} required />
             <input name="subject" placeholder="Asignatura" value={evaluationForm.subject} onChange={updateEvaluation} required />
             <input name="course" placeholder="Curso" value={evaluationForm.course} onChange={updateEvaluation} required />
             <input name="evaluationDate" type="date" value={evaluationForm.evaluationDate} onChange={updateEvaluation} />
-            <button type="submit">Guardar evaluación</button>
+            <button type="submit">{selectedEvaluationId ? 'Actualizar evaluación' : 'Guardar evaluación'}</button>
           </form>
         )}
 

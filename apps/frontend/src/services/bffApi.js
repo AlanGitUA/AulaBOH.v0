@@ -31,6 +31,11 @@ export const bffApi = {
       method: 'POST',
       body: JSON.stringify(data),
     }),
+  updateEvaluation: (evaluationId, data) =>
+    request(`/api/bff/evaluations/${evaluationId}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    }),
 
   createGrade: (data) =>
     request('/api/bff/grades', {
