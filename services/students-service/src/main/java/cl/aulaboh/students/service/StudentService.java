@@ -2,6 +2,7 @@ package cl.aulaboh.students.service;
 
 import cl.aulaboh.students.dto.StudentRequest;
 import cl.aulaboh.students.dto.StudentResponse;
+import cl.aulaboh.students.exception.DuplicateStudentUsernameException;
 import cl.aulaboh.students.exception.StudentNotFoundException;
 import cl.aulaboh.students.factory.StudentFactory;
 import cl.aulaboh.students.model.Student;
@@ -20,6 +21,7 @@ public class StudentService {
 
     @CircuitBreaker(name = "studentsServiceMethods")
     public StudentResponse create(StudentRequest request) {
+        validateUniqueStudentUsername(request.getStudentUsername());
         Student saved = repository.save(StudentFactory.createActiveStudent(request));
         return toResponse(saved);
     }
@@ -54,6 +56,7 @@ public class StudentService {
     @CircuitBreaker(name = "studentsServiceMethods")
     public StudentResponse update(Long id, StudentRequest request) {
         Student student = repository.findById(id).orElseThrow(() -> new StudentNotFoundException(id));
+        validateUniqueStudentUsername(request.getStudentUsername(), id);
         student.setFirstName(request.getFirstName());
         student.setLastName(request.getLastName());
         student.setCourse(request.getCourse());
@@ -68,6 +71,22 @@ public class StudentService {
     public void delete(Long id) {
         if (!repository.existsById(id)) throw new StudentNotFoundException(id);
         repository.deleteById(id);
+    }
+
+    private void validateUniqueStudentUsername(String username) {
+        if (hasText(username) && repository.existsByStudentUsernameIgnoreCase(username)) {
+            throw new DuplicateStudentUsernameException(username);
+        }
+    }
+
+    private void validateUniqueStudentUsername(String username, Long currentStudentId) {
+        if (hasText(username) && repository.existsByStudentUsernameIgnoreCaseAndIdNot(username, currentStudentId)) {
+            throw new DuplicateStudentUsernameException(username);
+        }
+    }
+
+    private boolean hasText(String value) {
+        return value != null && !value.isBlank();
     }
 
     private StudentResponse toResponse(Student student) {

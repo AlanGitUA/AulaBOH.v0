@@ -44,6 +44,16 @@ class ApiExceptionHandlerTest {
     }
 
     @Test
+    void returnsConflictForDuplicateStudentUsername() {
+        var response = handler.duplicateUsername(new DuplicateStudentUsernameException("estudiante.demo"));
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+        assertBody(response.getBody(), "DuplicateStudentUsernameException",
+                "Ya existe un estudiante asociado al usuario estudiante.demo");
+        assertErrorMetric("DuplicateStudentUsernameException", "409");
+    }
+
+    @Test
     void returnsInternalServerErrorForUnexpectedExceptionWithoutDetail() {
         var response = handler.general(new RuntimeException());
 
