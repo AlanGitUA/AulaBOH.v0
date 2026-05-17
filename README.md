@@ -13,6 +13,7 @@ services/grades-service          Microservicio de calificaciones
 platform/api-gateway             API Gateway
 platform/discovery-server        Eureka Server
 platform/keycloak                Autenticacion y roles
+platform/database                PostgreSQL para servicios de dominio
 packages/frontend-components     Componentes NPM reutilizables
 archetypes/                      Arquetipos Maven
 ```
@@ -26,6 +27,7 @@ archetypes/                      Arquetipos Maven
 | API Gateway | Entrada publica del backend mediante `/api/bff/**` |
 | Eureka Server | Registro y descubrimiento de servicios |
 | Keycloak | Autenticacion, emision de tokens y gestion de roles |
+| PostgreSQL | Persistencia relacional separada por servicio |
 | Microservicios | Gestion independiente de estudiantes, asistencia y calificaciones |
 
 ## Patrones aplicados
@@ -50,14 +52,20 @@ mvn clean install -DskipTests
 
 Luego iniciar cada componente en una terminal separada, en este orden:
 
-1. Keycloak
-2. Discovery Server
-3. Students Service
-4. Attendance Service
-5. Grades Service
-6. BFF
-7. API Gateway
-8. Frontend
+1. PostgreSQL
+2. Keycloak
+3. Discovery Server
+4. Students Service
+5. Attendance Service
+6. Grades Service
+7. BFF
+8. API Gateway
+9. Frontend
+
+```powershell
+cd platform/database
+docker compose up -d
+```
 
 ```powershell
 cd platform/keycloak
@@ -112,6 +120,7 @@ npm run dev
 | API Gateway | `8090` |
 | Discovery Server | `8761` |
 | Frontend | `5173` |
+| PostgreSQL | `5432` |
 
 ## Seguridad y acceso
 
@@ -141,6 +150,18 @@ Accesos principales:
 
 Todo el frontend consume el BFF mediante `/api/bff/...`, manteniendo una capa centralizada de orquestacion hacia los microservicios.
 
+## Persistencia
+
+Los microservicios de dominio usan PostgreSQL con una base separada por servicio:
+
+| Base | Servicio |
+|---|---|
+| `aulaboh_students` | `students-service` |
+| `aulaboh_attendance` | `attendance-service` |
+| `aulaboh_grades` | `grades-service` |
+
+El esquema se versiona con Flyway y Hibernate valida la estructura en cada arranque.
+
 ## Pruebas y calidad
 
 El backend incluye pruebas unitarias y de seguridad para los microservicios principales y el BFF. La cobertura se genera con JaCoCo.
@@ -157,4 +178,5 @@ mvn verify
 - `docs/keycloak-frontend-roles.md`
 - `docs/security-validation.md`
 - `docs/student-guardian-model.md`
+- `docs/database-persistence.md`
 - `docs/testing-quality.md`

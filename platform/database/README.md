@@ -38,4 +38,13 @@ docker compose ps
 docker exec -it aulaboh-postgres psql -U aulaboh -d postgres -c "\l"
 ```
 
+## Reinicio completo
+
+```powershell
+docker compose down -v
+docker compose up -d
+```
+
+Ese comando elimina el volumen local y recrea las bases desde cero. Se debe usar solo cuando se necesite reiniciar el entorno de desarrollo.
+
 La inicializacion de las bases se ejecuta solo cuando el volumen de PostgreSQL se crea por primera vez.
