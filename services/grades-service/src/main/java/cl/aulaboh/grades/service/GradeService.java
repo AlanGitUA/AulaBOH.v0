@@ -3,6 +3,7 @@ package cl.aulaboh.grades.service;
 import cl.aulaboh.grades.client.StudentClient;
 import cl.aulaboh.grades.dto.*;
 import cl.aulaboh.grades.exception.BusinessException;
+import cl.aulaboh.grades.exception.DuplicateEvaluationException;
 import cl.aulaboh.grades.model.*;
 import cl.aulaboh.grades.repository.*;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
@@ -21,6 +22,7 @@ public class GradeService {
 
     @CircuitBreaker(name = "gradesServiceMethods")
     public EvaluationResponse createEvaluation(EvaluationRequest request) {
+        validateUniqueEvaluation(request);
         Evaluation e = new Evaluation();
         e.setCourse(request.getCourse());
         e.setSubject(request.getSubject());
@@ -39,6 +41,7 @@ public class GradeService {
     public EvaluationResponse updateEvaluation(Long id, EvaluationRequest request) {
         Evaluation evaluation = evaluationRepository.findById(id)
                 .orElseThrow(() -> new BusinessException("La evaluacion no existe"));
+        validateUniqueEvaluation(request, id);
         evaluation.setCourse(request.getCourse());
         evaluation.setSubject(request.getSubject());
         evaluation.setTitle(request.getTitle());
@@ -62,6 +65,33 @@ public class GradeService {
 
     private EvaluationResponse toEvaluationResponse(Evaluation evaluation) {
         return new EvaluationResponse(evaluation.getId(), evaluation.getCourse(), evaluation.getSubject(), evaluation.getTitle(), evaluation.getEvaluationDate());
+    }
+
+    private void validateUniqueEvaluation(EvaluationRequest request) {
+        boolean duplicate = evaluationRepository
+                .existsByCourseIgnoreCaseAndSubjectIgnoreCaseAndTitleIgnoreCaseAndEvaluationDate(
+                        request.getCourse(),
+                        request.getSubject(),
+                        request.getTitle(),
+                        request.getEvaluationDate()
+                );
+        if (duplicate) {
+            throw new DuplicateEvaluationException();
+        }
+    }
+
+    private void validateUniqueEvaluation(EvaluationRequest request, Long currentEvaluationId) {
+        boolean duplicate = evaluationRepository
+                .existsByCourseIgnoreCaseAndSubjectIgnoreCaseAndTitleIgnoreCaseAndEvaluationDateAndIdNot(
+                        request.getCourse(),
+                        request.getSubject(),
+                        request.getTitle(),
+                        request.getEvaluationDate(),
+                        currentEvaluationId
+                );
+        if (duplicate) {
+            throw new DuplicateEvaluationException();
+        }
     }
 
     private GradeResponse toResponse(Grade grade) {

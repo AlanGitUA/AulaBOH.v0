@@ -34,6 +34,16 @@ class ApiExceptionHandlerTest {
     }
 
     @Test
+    void returnsConflictForDuplicateEvaluation() {
+        var response = handler.duplicateEvaluation(new DuplicateEvaluationException());
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+        assertBody(response.getBody(), "DuplicateEvaluationException",
+                "Ya existe una evaluacion con el mismo curso, asignatura, titulo y fecha");
+        assertErrorMetric("DuplicateEvaluationException", "409");
+    }
+
+    @Test
     void returnsServiceUnavailableForExternalDependency() {
         var response = handler.externalUnavailable(new ExternalServiceUnavailableException("students-service"));
 
