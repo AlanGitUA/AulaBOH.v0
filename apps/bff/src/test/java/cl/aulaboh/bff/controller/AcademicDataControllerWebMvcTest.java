@@ -7,6 +7,7 @@ import cl.aulaboh.bff.dto.AttendanceResponse;
 import cl.aulaboh.bff.dto.ClassResponse;
 import cl.aulaboh.bff.dto.EvaluationResponse;
 import cl.aulaboh.bff.dto.GradeResponse;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -38,6 +39,9 @@ class AcademicDataControllerWebMvcTest {
 
     @MockBean
     private GradesClient gradesClient;
+
+    @MockBean
+    private MeterRegistry meterRegistry;
 
     @Test
     void createsAndListsClasses() throws Exception {

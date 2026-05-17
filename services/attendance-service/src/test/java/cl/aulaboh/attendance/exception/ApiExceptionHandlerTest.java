@@ -1,5 +1,6 @@
 package cl.aulaboh.attendance.exception;
 
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import org.junit.jupiter.api.Test;
@@ -10,7 +11,7 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ApiExceptionHandlerTest {
-    private final ApiExceptionHandler handler = new ApiExceptionHandler();
+    private final ApiExceptionHandler handler = new ApiExceptionHandler(new SimpleMeterRegistry());
 
     @Test
     void returnsServiceUnavailableWhenCircuitBreakerIsOpen() {

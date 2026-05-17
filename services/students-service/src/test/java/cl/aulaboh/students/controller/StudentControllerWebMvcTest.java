@@ -2,6 +2,7 @@ package cl.aulaboh.students.controller;
 
 import cl.aulaboh.students.dto.StudentResponse;
 import cl.aulaboh.students.service.StudentService;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -23,6 +24,9 @@ class StudentControllerWebMvcTest {
 
     @MockBean
     private StudentService service;
+
+    @MockBean
+    private MeterRegistry meterRegistry;
 
     @Test
     void createReturnsCreatedStudent() throws Exception {

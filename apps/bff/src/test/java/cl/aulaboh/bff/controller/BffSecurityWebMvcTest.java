@@ -6,6 +6,7 @@ import cl.aulaboh.bff.config.SecurityConfig;
 import cl.aulaboh.bff.dto.AttendanceSummaryResponse;
 import cl.aulaboh.bff.dto.StudentResponse;
 import cl.aulaboh.bff.facade.AcademicSummaryFacade;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -36,6 +37,9 @@ class BffSecurityWebMvcTest {
 
     @MockBean
     private GradesClient gradesClient;
+
+    @MockBean
+    private MeterRegistry meterRegistry;
 
     @Test
     void returnsUnauthorizedWithoutToken() throws Exception {
