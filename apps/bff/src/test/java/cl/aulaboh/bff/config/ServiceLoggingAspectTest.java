@@ -1,5 +1,6 @@
 package cl.aulaboh.bff.config;
 
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
 import org.junit.jupiter.api.Test;
@@ -10,7 +11,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class ServiceLoggingAspectTest {
-    private final ServiceLoggingAspect aspect = new ServiceLoggingAspect();
+    private final ServiceLoggingAspect aspect = new ServiceLoggingAspect(new SimpleMeterRegistry());
     private final ProceedingJoinPoint joinPoint = mock(ProceedingJoinPoint.class);
     private final Signature signature = mock(Signature.class);
 
