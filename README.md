@@ -121,6 +121,7 @@ npm run dev
 | Discovery Server | `8761` |
 | Frontend | `5173` |
 | PostgreSQL | `5432` |
+| Eureka | `8761` |
 
 ## Seguridad y acceso
 
