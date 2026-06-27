@@ -1,186 +1,266 @@
-# AulaBOH - Colegio Bernardo O'Higgins
-
-Plataforma de Libro de Clases Digital basada en microservicios, con autenticacion centralizada, frontend web y servicios de dominio desacoplados.
-
-## Estructura
-
-```text
-apps/bff                         Backend For Frontend
-apps/frontend                    Frontend React
-services/students-service        Microservicio de estudiantes
-services/attendance-service      Microservicio de asistencia
-services/grades-service          Microservicio de calificaciones
-platform/api-gateway             API Gateway
-platform/discovery-server        Eureka Server
-platform/keycloak                Autenticacion y roles
-platform/database                PostgreSQL para servicios de dominio
-packages/frontend-components     Componentes NPM reutilizables
-archetypes/                      Arquetipos Maven
-```
-
-## Arquitectura
-
-| Componente | Responsabilidad |
-|---|---|
-| Frontend React | Interfaz operativa para los usuarios del sistema |
-| BFF | Orquestacion de respuestas orientadas al frontend |
-| API Gateway | Entrada publica del backend mediante `/api/bff/**` |
-| Eureka Server | Registro y descubrimiento de servicios |
-| Keycloak | Autenticacion, emision de tokens y gestion de roles |
-| PostgreSQL | Persistencia relacional separada por servicio |
-| Microservicios | Gestion independiente de estudiantes, asistencia y calificaciones |
-
-## Patrones aplicados
-
-| Patron | Evidencia en codigo | Uso |
-|---|---|---|
-| Repository Pattern | `repository/` en microservicios | Separar persistencia de logica de negocio |
-| Factory Method | `StudentFactory` | Crear estudiantes con valores por defecto |
-| Facade | `AcademicSummaryFacade` en BFF | Simplificar llamadas del frontend |
-| Adapter/Client | `StudentClient`, `AttendanceClient`, `GradesClient` | Encapsular comunicacion HTTP |
-| Module Pattern | `components`, `pages`, `services` en React | Ordenar frontend por responsabilidades |
-| Microservicios | `services/` | Separar modulos del sistema |
-| BFF | `apps/bff` | Adaptar backend a necesidades del frontend |
-
 ## Ejecucion recomendada
 
-Primero compilar desde la raiz del proyecto:
+Este proyecto puede estar ubicado en cualquier carpeta del computador.
+Por eso, todos los comandos deben ejecutarse usando rutas relativas desde la raiz del proyecto.
 
-```bash
+Primero se debe abrir una terminal en la carpeta principal del proyecto, donde se encuentran las carpetas:
+
+```text
+apps/
+services/
+platform/
+packages/
+docs/
+pom.xml
+```
+
+Ejemplo de ubicacion de la raiz del proyecto:
+
+```text
+AulaBOH.v0/
+```
+
+No es necesario que el proyecto este en una ruta especifica como `C:\proyectos`.
+Cada integrante debe ubicarse en la carpeta donde tenga descargado o clonado el proyecto.
+
+## 1. Levantar PostgreSQL
+
+Desde la raiz del proyecto:
+
+```powershell
+cd platform\database
+docker compose up -d
+```
+
+Verificar que el contenedor quedo activo:
+
+```powershell
+docker ps
+```
+
+Debe aparecer un contenedor relacionado con PostgreSQL, por ejemplo:
+
+```text
+aulaboh-postgres
+```
+
+## 2. Levantar Keycloak
+
+Abrir otra terminal desde la raiz del proyecto:
+
+```powershell
+cd platform\keycloak
+docker compose up -d
+```
+
+Keycloak queda disponible en:
+
+```text
+http://localhost:8089
+```
+
+Credenciales del administrador de Keycloak:
+
+```text
+Usuario: admin
+Contrasena: admin
+```
+
+El realm del proyecto se encuentra en:
+
+```text
+platform/keycloak/realms/aulaboh-realm.json
+```
+
+## 3. Compilar el proyecto desde la raiz
+
+Abrir una nueva terminal en la raiz del proyecto y ejecutar:
+
+```powershell
 mvn clean install -DskipTests
 ```
 
-Luego iniciar cada componente en una terminal separada, en este orden:
+Este comando compila los modulos sin volver a ejecutar las pruebas.
 
-1. PostgreSQL
-2. Keycloak
-3. Discovery Server
-4. Students Service
-5. Attendance Service
-6. Grades Service
-7. BFF
-8. API Gateway
-9. Frontend
+## 4. Levantar Eureka / Discovery Server
+
+Abrir una terminal nueva desde la raiz del proyecto:
 
 ```powershell
-cd platform/database
-docker compose up -d
-```
-
-```powershell
-cd platform/keycloak
-docker compose up -d
-```
-
-```powershell
-cd platform/discovery-server
+cd platform\discovery-server
 mvn spring-boot:run
 ```
 
+Link principal:
+
+```text
+http://localhost:8761
+```
+
+En Eureka deberian registrarse posteriormente:
+
+```text
+STUDENTS-SERVICE
+ATTENDANCE-SERVICE
+GRADES-SERVICE
+BFF
+API-GATEWAY
+```
+
+## 5. Levantar Students Service
+
+Puerto: `8081`
+
+Abrir una terminal nueva desde la raiz del proyecto:
+
 ```powershell
-cd services/students-service
+cd services\students-service
 mvn spring-boot:run
 ```
 
+Links para probar:
+
+```text
+http://localhost:8081/actuator/health
+http://localhost:8081/api/students
+```
+
+## 6. Levantar Attendance Service
+
+Puerto: `8084`
+
+Abrir una terminal nueva desde la raiz del proyecto:
+
 ```powershell
-cd services/attendance-service
+cd services\attendance-service
 mvn spring-boot:run
 ```
 
+Links para probar:
+
+```text
+http://localhost:8084/actuator/health
+http://localhost:8084/api/classes
+http://localhost:8084/api/attendances/student/1
+http://localhost:8084/api/attendances/course/4A
+http://localhost:8084/api/attendances/student/1/summary
+```
+
+## 7. Levantar Grades Service
+
+Puerto: `8083`
+
+Abrir una terminal nueva desde la raiz del proyecto:
+
 ```powershell
-cd services/grades-service
+cd services\grades-service
 mvn spring-boot:run
 ```
 
+Links para probar:
+
+```text
+http://localhost:8083/actuator/health
+http://localhost:8083/api/evaluations
+http://localhost:8083/api/grades/student/1
+```
+
+## 8. Levantar BFF
+
+Puerto: `8080`
+
+Abrir una terminal nueva desde la raiz del proyecto:
+
 ```powershell
-cd apps/bff
+cd apps\bff
 mvn spring-boot:run
 ```
 
+Links para probar:
+
+```text
+http://localhost:8080/actuator/health
+http://localhost:8080/api/bff/students
+http://localhost:8080/api/bff/classes
+http://localhost:8080/api/bff/evaluations
+http://localhost:8080/api/bff/students/1/summary
+```
+
+## 9. Levantar API Gateway
+
+Puerto: `8090`
+
+Abrir una terminal nueva desde la raiz del proyecto:
+
 ```powershell
-cd platform/api-gateway
+cd platform\api-gateway
 mvn spring-boot:run
 ```
 
+Links para probar por Gateway:
+
+```text
+http://localhost:8090/actuator/health
+http://localhost:8090/api/bff/students
+http://localhost:8090/api/bff/classes
+http://localhost:8090/api/bff/evaluations
+```
+
+El API Gateway expone principalmente las rutas del BFF mediante:
+
+```text
+/api/bff/**
+```
+
+## 10. Levantar Frontend
+
+Puerto: `5173`
+
+Abrir una terminal nueva desde la raiz del proyecto:
+
 ```powershell
-cd apps/frontend
+cd apps\frontend
 npm install
 npm run dev
 ```
 
-## Puertos
-
-| Componente | Puerto |
-|---|---:|
-| BFF | `8080` |
-| Students Service | `8081` |
-| Grades Service | `8083` |
-| Attendance Service | `8084` |
-| Keycloak | `8089` |
-| API Gateway | `8090` |
-| Discovery Server | `8761` |
-| Frontend | `5173` |
-| PostgreSQL | `5432` |
-| Eureka | `8761` |
-
-## Seguridad y acceso
-
-Keycloak administra la autenticacion y los roles del sistema. El API Gateway expone unicamente las rutas del BFF mediante:
+Link principal:
 
 ```text
-http://localhost:8090/api/bff/**
+http://localhost:5173
 ```
 
-Accesos principales:
+## Orden completo recomendado
 
-| Rol | Alcance |
-|---|---|
-| `ADMIN` | Administracion general, estudiantes, gestion academica y resumen general |
-| `DOCENTE` | Gestion academica y resumen general |
-| `ESTUDIANTE` | Consulta de su propio resumen academico |
-| `APODERADO` | Consulta de estudiantes asociados a su cuenta |
-
-## Flujo operativo
-
-1. Registrar estudiante.
-2. Registrar clase.
-3. Registrar asistencia.
-4. Registrar evaluacion.
-5. Registrar calificacion.
-6. Consultar resumen academico segun el rol autenticado.
-
-Todo el frontend consume el BFF mediante `/api/bff/...`, manteniendo una capa centralizada de orquestacion hacia los microservicios.
-
-## Persistencia
-
-Los microservicios de dominio usan PostgreSQL con una base separada por servicio:
-
-| Base | Servicio |
-|---|---|
-| `aulaboh_students` | `students-service` |
-| `aulaboh_attendance` | `attendance-service` |
-| `aulaboh_grades` | `grades-service` |
-
-El esquema se versiona con Flyway y Hibernate valida la estructura en cada arranque.
-
-## Pruebas y calidad
-
-El backend incluye pruebas unitarias y de seguridad para los microservicios principales y el BFF. La cobertura se genera con JaCoCo.
-
-```bash
-mvn test
-mvn verify
+```text
+1. PostgreSQL
+2. Keycloak
+3. Compilacion Maven desde la raiz
+4. Eureka / Discovery Server
+5. Students Service
+6. Attendance Service
+7. Grades Service
+8. BFF
+9. API Gateway
+10. Frontend
 ```
 
-## Documentacion
+## Importante sobre las rutas
 
-- `docs/system-overview.md`
-- `docs/platform-security.md`
-- `docs/database-persistence.md`
-- `docs/student-guardian-model.md`
-- `docs/keycloak-frontend-roles.md`
-- `docs/security-validation.md`
-- `docs/resilience-circuit-breaker.md`
-- `docs/api-docs-swagger.md`
-- `docs/observabilidad-metricas-logs.md`
-- `docs/testing-quality.md`
+Los comandos estan escritos con rutas relativas para que funcionen en cualquier computador.
+
+Correcto:
+
+```powershell
+cd platform\keycloak
+docker compose up -d
+```
+
+Incorrecto para un README compartido:
+
+```powershell
+cd "C:\proyectos\AulaBOH.v0\platform\keycloak"
+docker compose up -d
+```
+
+Cada integrante solo debe asegurarse de abrir la terminal en la carpeta raiz del proyecto antes de ejecutar los comandos.
